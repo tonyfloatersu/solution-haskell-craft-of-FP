@@ -154,6 +154,16 @@ ioPutNtimes    = do
     str <- getLine
     putNtimes times str
 
+getAllInt :: Integer -> IO [Integer]
+getAllInt total    = if total == 1
+                     then do
+                         temp <- getInt
+                         return [temp]
+                     else do
+                         temp <- getInt
+                         _temp <- getAllInt (total - 1)
+                         return (temp : _temp)
+
 ioSumList :: IO ()
 ioSumList    = do
     putStrLn "Give me a number: "
@@ -162,13 +172,3 @@ ioSumList    = do
     list <- getAllInt quantity
     let listsum = sum list
     putStrLn ("Here is the sum of " ++ show quantity ++ "number(s): " ++ show listsum)
-  where
-    getAllInt :: Integer -> IO [Integer]
-    getAllInt total    = if total == 1
-                         then do
-                             temp <- getInt
-                             return [temp]
-                         else do
-                             temp <- getInt
-                             _temp <- getAllInt (total - 1)
-                             return (temp : _temp)
