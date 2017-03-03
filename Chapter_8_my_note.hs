@@ -256,3 +256,21 @@ ioListSortedButZero    = do
     storage <- listButZero
     let sorted   = qSort storage
     printListNum sorted
+
+copy :: IO ()
+copy =    do
+    line <- getLine
+    let whileCopy = do
+        if line == ""
+            then return ()
+            else do
+                putStrLn line
+                line <- getLine
+                whileCopy
+    whileCopy
+
+-- the function do not stop if you do not input "" at first time
+-- the immitation to while is wrong here
+-- since line is predefined for the whileCopy,
+-- so it will never change variable line twice
+
