@@ -1,6 +1,6 @@
 module Chapter_8_my_note where
 
-import           Chapter_7_my_note (isPalin)
+import           Chapter_7_my_note (isPalin, splitWord)
 
 data Move = Rock | Paper | Scissors
             deriving (Show, Eq)
@@ -8,13 +8,13 @@ data Move = Rock | Paper | Scissors
 type Tournament = ([Move], [Move])
 
 outcome :: Move -> Move -> Integer
-outcome Rock Paper        = -1
-outcome Paper Rock        = 1
-outcome Paper Scissors    = -1
-outcome Rock Scissors     = 1
-outcome Scissors Paper    = 1
-outcome Scissors Rock     = -1
-outcome _ _               = 0
+outcome Rock Paper     = -1
+outcome Paper Rock     = 1
+outcome Paper Scissors = -1
+outcome Rock Scissors  = 1
+outcome Scissors Paper = 1
+outcome Scissors Rock  = -1
+outcome _ _            = 0
 
 tournamentOutcome :: Tournament -> Integer
 tournamentOutcome tour    = sum [outcome (fst tp) (snd tp)
@@ -29,37 +29,37 @@ scissors _    = Scissors
 
 cycle' :: Strategy
 cycle' moves    = case length moves `rem` 3 of
-                       0    -> Rock
-                       1    -> Paper
-                       2    -> Scissors
+                       0 -> Rock
+                       1 -> Paper
+                       2 -> Scissors
 
 echo :: Strategy
-echo (latest : _)    = latest
-echo []              = Rock
+echo (latest : _) = latest
+echo []           = Rock
 
 data Result = Win | Lose | Draw
               deriving (Eq, Show)
 
 beat :: Move -> Move
-beat Rock     = Paper
-beat Paper    = Scissors
-beat _        = Rock
+beat Rock  = Paper
+beat Paper = Scissors
+beat _     = Rock
 
 lose :: Move -> Move
-lose Rock     = Scissors
-lose Paper    = Rock
-lose _        = Paper
+lose Rock  = Scissors
+lose Paper = Rock
+lose _     = Paper
 
 draw :: Move -> Move
 draw a    = a
 
 winLast :: Strategy
-winLast (latest : _)    = beat latest
-winLast []              = Rock
+winLast (latest : _) = beat latest
+winLast []           = Rock
 
 loseLast :: Strategy
-loseLast (latest : _)    = lose latest
-loseLast []              = Scissors
+loseLast (latest : _) = lose latest
+loseLast []           = Scissors
 
 -- leave this part to 18.2
 randomStrategy :: Strategy
@@ -71,9 +71,9 @@ randomStrategyOptional [step]    = randomStrategy [step]
 randomStrategyOptional (mv1 : mv2 : remain)
     | mv1 /= mv2                 = randomStrategy (mv1 : mv2 : remain)
     | otherwise                  = case mv1 of
-                                        Rock        -> Scissors
-                                        Scissors    -> Paper
-                                        _           -> Rock
+                                        Rock     -> Scissors
+                                        Scissors -> Paper
+                                        _        -> Rock
 
 moveIndex :: [Move] -> Move -> Int
 moveIndex moves target    = length [mv | mv <- moves, mv == target]
@@ -93,12 +93,12 @@ bestStrategyPredict :: Move -> Move -> Move
 bestStrategyPredict mv1 mv2    = if mv1 == mv2
                                  then error "the moves are same, error"
                                  else case (mv1, mv2) of
-                                           (Paper, Scissors)    -> Scissors
-                                           (Scissors, Paper)    -> Scissors
-                                           (Rock, Paper)        -> Paper
-                                           (Paper, Rock)        -> Paper
-                                           (Scissors, Rock)     -> Rock
-                                           _                    -> Rock
+                                           (Paper, Scissors) -> Scissors
+                                           (Scissors, Paper) -> Scissors
+                                           (Rock, Paper)     -> Paper
+                                           (Paper, Rock)     -> Paper
+                                           (Scissors, Rock)  -> Rock
+                                           _                 -> Rock
 
 findLeast :: [Move] -> Move
 findLeast []    = randomStrategy []
@@ -172,3 +172,35 @@ ioSumList    = do
     list <- getAllInt quantity
     let listsum = sum list
     putStrLn ("Here is the sum of " ++ show quantity ++ "number(s): " ++ show listsum)
+
+copyEmpty :: IO ()
+copyEmpty    = do
+    line <- getLine
+    if line == ""
+        then return ()
+        else do
+            putStrLn line
+            copyEmpty
+
+tripadd :: (Int, Int, Int) -> (Int, Int, Int) -> (Int, Int, Int)
+tripadd (p1pt1, p1pt2, p1pt3) (p2pt1, p2pt2, p2pt3)
+    = (p1pt1 + p2pt1, p1pt2 + p2pt2, p1pt3 + p2pt3)
+
+lineConcat :: IO [String]
+lineConcat    = do
+    line <- getLine
+    if line /= ""
+        then do
+            _rest <- lineConcat
+            return (line : _rest)
+        else return []
+
+unix_wc :: IO ()
+unix_wc    = do
+    linestore <- lineConcat
+    let lineNum = length linestore
+    let symbNum = sum [length len | len <- linestore]
+    let wordNum = sum [(length . splitWord) len | len <- linestore]
+    putStrLn ("line: " ++ show lineNum
+              ++ ", word: " ++ show wordNum
+              ++ ", symbol: " ++ show symbNum)
