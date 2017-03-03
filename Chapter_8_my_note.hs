@@ -1,6 +1,6 @@
 module Chapter_8_my_note where
 
-import           Chapter_7_my_note (isPalin, splitWord)
+import           Chapter_7_my_note (isPalin, splitWord, qSort)
 
 data Move = Rock | Paper | Scissors
             deriving (Show, Eq)
@@ -204,3 +204,55 @@ unix_wc    = do
     putStrLn ("line: " ++ show lineNum
               ++ ", word: " ++ show wordNum
               ++ ", symbol: " ++ show symbNum)
+
+serialPalin :: [String] -> IO ()
+serialPalin strset    = if length strset == 0
+                        then return ()
+                        else do
+                            palinJdg (head strset)
+                            serialPalin (tail strset)
+  where palinJdg :: String -> IO ()
+        palinJdg line    = if isPalin line
+                           then putStrLn ("``" ++ line ++ "`` " ++ "is palin")
+                           else putStrLn ("``" ++ line ++ "`` " ++ "is not Palin")
+combinedPalin :: IO ()
+combinedPalin    = do
+    storage <- lineConcat
+    serialPalin storage
+
+sumButZero :: IO Integer
+sumButZero    = do
+    test <- getInt
+    if test == 0
+        then return 0
+        else do
+            _rem <- sumButZero
+            return (_rem + test)
+
+ioSumButZero :: IO ()
+ioSumButZero    = do
+    putStrLn "Give me integers but zerooooooo:"
+    res <- sumButZero
+    putStrLn ("Result is: " ++ show res)
+
+listButZero :: IO [Integer]
+listButZero    = do
+    test <- getInt
+    if test == 0
+        then return []
+        else do
+            _rem <- listButZero
+            return (test : _rem)
+
+printListNum :: [Integer] -> IO ()
+printListNum ls    = if length ls /= 0
+                     then do
+                         putStrLn (show (head ls))
+                         printListNum (tail ls)
+                     else return ()
+
+ioListSortedButZero :: IO ()
+ioListSortedButZero    = do
+    storage <- listButZero
+    let sorted   = qSort storage
+    printListNum sorted
