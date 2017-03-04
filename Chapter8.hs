@@ -471,4 +471,3 @@ randomPlay =
             7 -> sToss (const Rock) (const Scissors)
             8 -> const Paper
             9 -> randomStrategy)
-            
