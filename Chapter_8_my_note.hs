@@ -351,3 +351,12 @@ playSvsS strategyA strategyB _round    = if _round == 1
                                          then step strategyA strategyB ([], [])
                                          else step strategyA strategyB
                                                (playSvsS strategyA strategyB (_round - 1))
+
+showTournament :: Tournament -> String
+showTournament ([], [])              = ""
+showTournament (mymove, yourmove)    =
+    "i have " ++ (show . head) mymove ++ " and you have " ++ (show . head) yourmove ++ "\n"
+    ++ showTournament (tail mymove, tail yourmove)
+
+displayTournament :: Tournament -> IO ()
+displayTournament    = putStrLn . showTournament
