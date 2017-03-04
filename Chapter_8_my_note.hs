@@ -341,3 +341,13 @@ randomPlay    = do
                7 -> scissors
                8 -> winLast
                9 -> loseLast)
+
+step :: Strategy -> Strategy -> Tournament -> Tournament
+step strategyA strategyB ( moveA, moveB )    =
+    (strategyA moveB : moveA, strategyB moveA : moveB)
+
+playSvsS :: Strategy -> Strategy -> Integer -> Tournament
+playSvsS strategyA strategyB _round    = if _round == 1
+                                         then step strategyA strategyB ([], [])
+                                         else step strategyA strategyB
+                                               (playSvsS strategyA strategyB (_round - 1))
