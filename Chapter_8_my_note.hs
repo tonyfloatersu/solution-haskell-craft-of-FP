@@ -1,6 +1,9 @@
 module Chapter_8_my_note where
 
 import           Chapter_7_my_note (isPalin, splitWord, qSort)
+import           Data.Time.Clock
+import           Data.Time.Format
+import           System.IO.Unsafe
 
 data Move = Rock | Paper | Scissors
             deriving (Show, Eq)
@@ -61,9 +64,22 @@ loseLast :: Strategy
 loseLast (latest : _) = lose latest
 loseLast []           = Scissors
 
--- leave this part to 18.2
+randomInt :: Integer -> IO Integer
+randomInt n    = do
+    time <- getCurrentTime
+    return ((`rem` n) $ read $ take 6 $ formatTime defaultTimeLocale "%q" time)
+
+randInt :: Integer -> Integer
+randInt    = unsafePerformIO . randomInt
+
+convertToMove :: Integer -> Move
+convertToMove num    = case num of
+                            0 -> Rock
+                            1 -> Scissors
+                            _ -> Paper
+
 randomStrategy :: Strategy
-randomStrategy    = undefined
+randomStrategy _   = convertToMove (randInt 3)
 
 randomStrategyOptional :: Strategy
 randomStrategyOptional []        = randomStrategy []
@@ -273,4 +289,3 @@ copy =    do
 -- the immitation to while is wrong here
 -- since line is predefined for the whileCopy,
 -- so it will never change variable line twice
-
