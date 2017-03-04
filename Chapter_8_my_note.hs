@@ -79,7 +79,7 @@ convertToMove num    = case num of
                             _ -> Paper
 
 randomStrategy :: Strategy
-randomStrategy _   = convertToMove (randInt 3)
+randomStrategy _    = convertToMove (randInt 3)
 
 randomStrategyOptional :: Strategy
 randomStrategyOptional []        = randomStrategy []
