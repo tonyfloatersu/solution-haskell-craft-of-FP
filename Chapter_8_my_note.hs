@@ -330,17 +330,17 @@ play strategy    = playInteractive strategy ([], [])
 
 randomPlay :: IO ()
 randomPlay    = do
-    rand <- randomInt 10
+    rand <- randomInt 9
     play (case rand of
                0 -> echo
                1 -> rock
-               3 -> randomStrategy
-               4 -> randomStrategyOptional
-               5 -> findLeast
-               6 -> paper
-               7 -> scissors
-               8 -> winLast
-               9 -> loseLast)
+               2 -> randomStrategy
+               3 -> randomStrategyOptional
+               4 -> findLeast
+               5 -> paper
+               6 -> scissors
+               7 -> winLast
+               8 -> loseLast)
 
 step :: Strategy -> Strategy -> Tournament -> Tournament
 step strategyA strategyB ( moveA, moveB )    =
