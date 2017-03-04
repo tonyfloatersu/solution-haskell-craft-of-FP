@@ -324,3 +324,20 @@ playInteractive strategy tnmt@ (mine, yours)    = do
             putStrLn ("\nI play: " ++ show next ++ " you play: " ++ [ch])
             let yourmove    = convertMove ch
             playInteractive strategy (next : mine, yourmove : yours)
+
+play :: Strategy -> IO ()
+play strategy    = playInteractive strategy ([], [])
+
+randomPlay :: IO ()
+randomPlay    = do
+    rand <- randomInt 10
+    play (case rand of
+               0 -> echo
+               1 -> rock
+               3 -> randomStrategy
+               4 -> randomStrategyOptional
+               5 -> findLeast
+               6 -> paper
+               7 -> scissors
+               8 -> winLast
+               9 -> loseLast)
