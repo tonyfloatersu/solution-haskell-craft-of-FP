@@ -456,7 +456,6 @@ showResults t =
 -- Play against a randomly chosen strategy
 
 randomPlay :: IO ()
-
 randomPlay =
     do
       rand <- randomInt 10
