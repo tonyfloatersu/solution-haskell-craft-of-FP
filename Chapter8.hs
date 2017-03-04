@@ -22,22 +22,20 @@ import Test.QuickCheck
 
 -- A type of moves
 
-data Move = Rock | 
-            Paper | 
-            Scissors
+data Move = Rock | Paper | Scissors
             deriving Eq
 
 -- Showing Moves in an abbreviated form.
 
 instance Show Move where
-      show Rock = "r"
-      show Paper = "p"
-      show Scissors = "s"
+ show Rock = "r"
+ show Paper = "p"
+ show Scissors = "s"
 
 -- For QuickCheck to work over the Move type.
 
 instance Arbitrary Move where
-  arbitrary     = elements [Rock, Paper, Scissors]
+ arbitrary     = elements [Rock, Paper, Scissors]
 
 -- Convert from 0,1,2 to a Move
 
