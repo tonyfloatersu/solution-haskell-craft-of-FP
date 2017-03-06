@@ -146,6 +146,14 @@ Ind:
 
 {-
 solution 9.9
+zip (fst (unzip ps)) (snd (unzip ps)) == ps
+
+Base:
+    zip (fst (unzip ([], []))) (snd (unzip ([], []))) == zip [] [] == ([], [])
+
+Ind:
+    zip (fst (unzip (x : xs, y : ys))) (snd (unzip (x : xs, y : ys)))
+    == zip (x : xs) (y : ys) == (x : xs, y : ys)
 -}
 
 {-
