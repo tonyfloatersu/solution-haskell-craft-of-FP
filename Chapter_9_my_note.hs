@@ -70,6 +70,18 @@ Ind:
 
 {-
 solution 9.5
+Base:
+    LHS:
+        sum ([] ++ ys) == sum ys
+    RHS:
+        sum [] + sum ys == 0 + sum ys == sum ys
+    LHS == RHS
+
+Ind:
+    LHS:
+        sum ((x : xs) ++ ys) == sum ([x] ++ xs ++ ys) == x + sum (xs ++ ys)
+    RHS:
+        sum (x : xs) + sum ys == x + sum xs + sum ys == x + sum (xs ++ ys)
 -}
 
 {-
