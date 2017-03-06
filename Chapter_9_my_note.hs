@@ -113,6 +113,23 @@ Ind:
 
 {-
 solution 9.7
+sum (reverse xs) == sum xs
+
+Base:
+    sum (reverse []) == 0 == sum []
+Ind:
+    sum (reverse (x : xs)) == sum (xs ++ [x]) == x + sum xs
+    sum (x : xs) == x + sum xs
+    LHS == RHS
+
+length (reverse xs) == length xs
+
+Base:
+    length (reverse []) == length [] == 0
+Ind:
+    length (reverse (x : xs)) == length (xs ++ [x]) == 1 + length xs
+    length (x : xs) == 1 + length xs
+    LHS == RHS
 -}
 
 {-
