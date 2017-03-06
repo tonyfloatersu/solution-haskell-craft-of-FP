@@ -37,7 +37,7 @@ Ind:
         == flipH ([reverse line | line <- pic] ++ (reverse picline))
                                                 | according to reverse on book
         == (reverse picline) ++ reverse [reverse line | line <- pic]
-        == (reverse picline) ++ [reverse line | line <- reverse pic]
+        == (reverse picline) ++ [reverse line | line <- (reverse pic)]
 
     Left hand side == Right hand side
     Q.E.D
