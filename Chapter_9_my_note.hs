@@ -41,6 +41,17 @@ Ind:
 
     Left hand side == Right hand side
     Q.E.D
+
+The rest two are easy.
+Ind:
+    flipV (flipV pic)
+    == flipV [reverse line | line <- pic]
+    == [reverse (reverse line) | line <- pic]
+    == pic
+
+    flipH (flipH pic)
+    == reverse (reverse pic)
+    == pic
 -}
 
 {-
