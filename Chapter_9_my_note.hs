@@ -88,6 +88,27 @@ Ind:
 
 {-
 solution 9.6
+xs ++ [] == xs
+Base:
+    [] ++ [] == LHS
+    [] == RHS
+    [] == [] ++ []
+    LHS == RHS
+Ind:
+    (x : xs) ++ [] == LHS
+    == (x : (xs ++ []))
+    hypothsis: \forall xs ++ [] == xs
+    hypothsis apply
+    == (x : xs) == RHS
+
+xs ++ (ys ++ zs) == (xs ++ ys) ++ zs
+
+Base:
+    [] ++ (ys ++ zs) == (ys ++ zs) == ([] ++ ys) ++ zs
+Ind:
+    theorem here: (x : xs) ++ ps == x : (xs ++ ps)
+    (x : xs) ++ (ys ++ zs) == x : (xs ++ (ys ++ zs)) == x : ((xs ++ ys) ++ zs)
+    == (x : (xs ++ ys) ++ zs) == (((x : xs) ++ ys) ++ zs)
 -}
 
 {-
