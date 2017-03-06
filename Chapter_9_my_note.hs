@@ -83,6 +83,7 @@ Ind:
         == x + sum xs + sum ys
     RHS:
         sum (x : xs) + sum ys == x + sum xs + sum ys == x + sum (xs ++ ys)
+    LHS == RHS
 -}
 
 {-
