@@ -80,6 +80,7 @@ Base:
 Ind:
     LHS:
         sum ((x : xs) ++ ys) == sum ([x] ++ xs ++ ys) == x + sum (xs ++ ys)
+        == x + sum xs + sum ys
     RHS:
         sum (x : xs) + sum ys == x + sum xs + sum ys == x + sum (xs ++ ys)
 -}
