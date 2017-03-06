@@ -140,6 +140,11 @@ findLeast _ls     = if length leastMoves == 2
     leastMoves :: [Move]
     leastMoves    = (minMoveName . movesNameIndex) _ls
 
+alternative :: Strategy -> Strategy -> [Move] -> Move
+alternative strategyA strategyB moves
+    | length moves `mod` 2 == 0    = strategyA moves
+    | otherwise                    = strategyB moves
+
 -- if we do not have the prev, then the function do not produce a certain solution
 -- which goes against the pure function, this is not correct
 -- so I have to add a prev move, or I just use a random choice based on 18.2
