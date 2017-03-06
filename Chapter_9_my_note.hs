@@ -1,6 +1,7 @@
 module Chapter_9_my_note where
 
 import           Pictures
+import           Test.QuickCheck
 
 frac :: Integer -> Integer
 frac n
@@ -171,9 +172,53 @@ Ind:
                      == x : take (n - 1) xs ++ drop (n - 1) ys
 -}
 
-{-
-solution 9.11
--}
+prop_flipv_fliph :: Picture -> Bool
+prop_flipv_fliph pic    = (flipV . flipH) pic == (flipH . flipV) pic
+
+prop_flipv :: Picture -> Bool
+prop_flipv pic    = (flipV . flipV) pic == pic
+
+prop_fliph :: Picture -> Bool
+prop_fliph pic    = (flipH . flipH) pic == pic
+
+tester_env :: (Picture -> Bool) -> IO ()
+tester_env    = quickCheck
+
+prop_sum_list :: [Integer] -> [Integer] -> Bool
+prop_sum_list xs ys    = sum (xs ++ ys) == sum xs + sum ys
+
+test_sum_env :: ([Integer] -> [Integer] -> Bool) -> IO ()
+test_sum_env    = quickCheck
+
+prop_sum_rev_list :: [Integer] -> Bool
+prop_sum_rev_list ls    = (sum . reverse) ls == sum ls
+
+test_sum_rev_env :: ([Integer] -> Bool) -> IO ()
+test_sum_rev_env    = quickCheck
+
+prop_length_rev_list :: [a] -> Bool
+prop_length_rev_list ls    = (length . reverse) ls == length ls
+
+test_length_rev_env :: Show a => Arbitrary a => ([a] -> Bool) -> IO ()
+test_length_rev_env    = quickCheck
+
+prop_elem_list :: Eq a => a -> [a] -> [a] -> Bool
+prop_elem_list z xs ys    = elem z (xs ++ ys) == elem z xs || elem z ys
+
+test_elem_env :: Arbitrary a => Show a => (a -> [a] -> [a] -> Bool) -> IO ()
+test_elem_env    = quickCheck
+
+prop_zip_list :: Eq a => Eq b => [(a, b)] -> Bool
+prop_zip_list ps    = zip (fst (unzip ps)) (snd (unzip ps)) == ps
+
+test_zip_env :: Arbitrary a => Arbitrary b => Show a => Show b => ([(a, b)] -> Bool) -> IO ()
+test_zip_env    = quickCheck
+
+prop_take_drop :: Eq a => Int -> [a] -> Bool
+prop_take_drop n xs    = take n xs ++ drop n xs == xs
+
+test_take_drop :: Arbitrary a => Show a => (Int -> [a] -> Bool) -> IO ()
+test_take_drop    = quickCheck
 
 {-
 solution 9.12
