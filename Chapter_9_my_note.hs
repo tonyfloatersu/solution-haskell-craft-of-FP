@@ -158,6 +158,17 @@ Ind:
 
 {-
 solution 9.10
+take n xs ++ drop n xs == xs
+
+Base:
+    take n [] ++ drop n [] == [] no matter what n is
+
+Ind:
+    take n (x : xs) ++ drop n (y : ys)
+    if n <= 0   then take n (x : xs) ++ drop n (y : ys) == drop n (y : ys) == y : ys == x : xs
+                where x : xs == y : ys
+    if n > 0    then take n (x : xs) ++ drop n (y : ys)
+                     == x : take (n - 1) xs ++ drop (n - 1) ys
 -}
 
 {-
