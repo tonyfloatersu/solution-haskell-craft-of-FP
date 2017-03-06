@@ -56,6 +56,16 @@ Ind:
 
 {-
 solution 9.4
+flipV (above pic1 pic2) == above (flipV pic2) (flipV pic1)
+Base:
+    flipV (above [] pic2) == flipV pic2 == [reverse line | line <- pic2]
+    above (flipV pic2) [] == flipV pic2 == [reverse line | line <- pic2]
+    LFT == RHT
+
+Ind:
+    flipV (above (p:pic1) pic2) == flipV ((p:pic1) ++ pic2)
+    above (flipV (p:pic1)) (flipV pic2) == flipV ((p:pic1) ++ pic2)
+    LHT == RHT
 -}
 
 {-
