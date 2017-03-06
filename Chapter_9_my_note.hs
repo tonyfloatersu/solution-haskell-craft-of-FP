@@ -134,6 +134,14 @@ Ind:
 
 {-
 solution 9.8
+elem z (xs ++ ys) == elem z xs || elem z ys
+
+Base:
+    elem z ([] ++ ys) == elem z ys == elem z [] || elem z ys
+
+Ind:
+    elem z ((x : xs) ++ ys) == elem z (x : (xs ++ ys)) == elem z [x] || elem z (xs ++ ys)
+    == elem z [x] || elem z xs || elem z ys
 -}
 
 {-
