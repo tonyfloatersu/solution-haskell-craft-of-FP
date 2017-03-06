@@ -15,6 +15,32 @@ mult a b
 
 {-
 solution 9.3
+Base:
+    Since flipH [] == flipV [] == []
+    Thus:
+        Left hand side == Right hand side
+
+Ind:
+    Since we can use the picline, and it goes like that
+    pic ++ picline as a picture
+    ---------------------------------------------------
+    Left hand side:
+        flipV (flipH (pic ++ picline))
+                                                | according to the reverse on book
+        == flipV (picline ++ reverse pic)
+                                                | then based on definition on chapter 6
+        == (reverse picline) ++ [reverse line | line <- (reverse pic)]
+
+    Right hand side:
+        flipH (flipV (pic ++ picline))
+                                                | according to chapter 6
+        == flipH ([reverse line | line <- pic] ++ (reverse picline))
+                                                | according to reverse on book
+        == (reverse picline) ++ reverse [reverse line | line <- pic]
+        == (reverse picline) ++ [reverse line | line <- reverse pic]
+
+    Left hand side == Right hand side
+    Q.E.D
 -}
 
 {-
