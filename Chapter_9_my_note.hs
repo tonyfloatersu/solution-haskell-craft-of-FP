@@ -49,9 +49,12 @@ solution 9.10
 solution 9.11
 -}
 
+{-
+solution 9.12
+-}
 
 {-
-solution 9.11
+solution 9.13
 -}
 
 {-
@@ -60,8 +63,4 @@ solution 9.14
 
 {-
 solution 9.15
--}
-
-{-
-solution 9.16
 -}
