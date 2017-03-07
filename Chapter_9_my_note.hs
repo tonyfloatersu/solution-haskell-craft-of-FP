@@ -266,6 +266,16 @@ fac2 n    = facAux n 1
 
 {-
 solution 9.13
+fac2 n == frac n
+
+Base:
+fac2 0 == 1 == frac 0
+
+Ind:
+    frac (n + 1) = (n + 1) * frac n
+    fac2 (n + 1) = facAux n (n + 1) * p
+    p * frac n = facAux n p
+    fac2 (n + 1) = p * facAux n (n + 1) == (n + 1) * p * frac n == (n + 1) * frac n
 -}
 
 prop_old_new_rev :: Eq a => [a] -> Bool
