@@ -245,6 +245,16 @@ Ind:
     shunt ys [] ++ shunt xs [] ++ zs == shunt ys [] ++ zs == shunt ys zs
     shunt ys (shunt (x : xs) zs) == shunt ys (shunt xs (x : zs)) == shunt ys [] ++ shunt xs [] ++ (x : zs)
     shunt ys [] ++ shunt (x : xs) [] ++ zs == shunt ys [] ++ shunt xs [x] ++ zs == shunt ys [] ++ shunt xs [] ++ x : zs
+    let zs == []
+    then shunt ys [] ++ shunt xs [] == rev ys ++ rev xs
+         shunt ys (shunt xs []) == shunt ys (rev xs) == rev ys ++ rev xs
+    addition:
+    proof for shunt xs [] ++ ys == shunt xs ys
+    stronger: shunt xs zs ++ ys == shunt xs (zs ++ ys)
+    shunt [] zs ++ ys == zs ++ ys == shunt [] (zs ++ ys)
+    shunt (x : xs) zs ++ ys == shunt xs (x : zs) ++ ys == shunt xs (x : (zs ++ ys))
+    shunt (x : xs) (zs ++ ys) == shunt xs (x : (zs ++ ys))
+    Q.E.D
 -}
 
 {-
