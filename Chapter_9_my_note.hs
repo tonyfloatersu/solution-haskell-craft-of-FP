@@ -261,6 +261,9 @@ facAux :: Integer -> Integer -> Integer
 facAux 0 p    = p
 facAux n p    = facAux (n - 1) (n * p)
 
+fac2 :: Integer -> Integer
+fac2 n    = facAux n 1
+
 {-
 solution 9.13
 -}
@@ -270,9 +273,6 @@ prop_old_new_rev ls    = rev ls == reverse ls
 
 test_old_new_rev_env :: Arbitrary a => Show a => ([a] -> Bool) -> IO ()
 test_old_new_rev_env    = quickCheck
-
-fac2 :: Integer -> Integer
-fac2 n    = facAux n 1
 
 prop_fac2 :: Integer -> Property
 prop_fac2 n    = (n > 0) ==> fac2 n == frac n
