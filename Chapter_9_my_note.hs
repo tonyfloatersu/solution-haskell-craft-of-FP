@@ -257,14 +257,25 @@ Ind:
     Q.E.D
 -}
 
+facAux :: Integer -> Integer -> Integer
+facAux 0 p    = p
+facAux n p    = facAux (n - 1) (n * p)
+
 {-
 solution 9.13
 -}
 
-{-
-solution 9.14
--}
+prop_old_new_rev :: Eq a => [a] -> Bool
+prop_old_new_rev ls    = rev ls == reverse ls
 
-{-
-solution 9.15
--}
+test_old_new_rev_env :: Arbitrary a => Show a => ([a] -> Bool) -> IO ()
+test_old_new_rev_env    = quickCheck
+
+fac2 :: Integer -> Integer
+fac2 n    = facAux n 1
+
+prop_fac2 :: Integer -> Property
+prop_fac2 n    = (n > 0) ==> fac2 n == frac n
+
+test_fac2_env :: (Integer -> Property) -> IO ()
+test_fac2_env    = quickCheck
