@@ -220,8 +220,31 @@ prop_take_drop n xs    = take n xs ++ drop n xs == xs
 test_take_drop :: Arbitrary a => Show a => (Int -> [a] -> Bool) -> IO ()
 test_take_drop    = quickCheck
 
+shunt :: [a] -> [a] -> [a]
+shunt [] ys          = ys
+shunt (x : xs) ys    = shunt xs (x : ys)
+
+rev :: [a] -> [a]
+rev xs    = shunt xs []
+
 {-
 solution 9.12
+rev (xs ++ ys) == shunt (xs ++ ys) [] == shunt ys [] ++ shunt xs []
+
+Base:
+    shunt ([] ++ ys) [] == shunt ys [] == rev ys == RHS
+Ind:
+1.
+    rev ((x : xs) ++ ys) == shunt ((x : xs) ++ ys) [] == shunt (x : (xs ++ ys)) [] == shunt (xs ++ ys) [x]
+    rev ys ++ shunt xs [x] ?== shunt (xs ++ ys) [x]
+2.
+    change: shunt (xs ++ ys) [] == shunt ys [] ++ shunt xs []
+        <=> shunt ys (shunt xs zs) == shunt ys [] ++ shunt xs [] ++ zs
+    then:
+    shunt ys (shunt [] zs) == shunt ys zs
+    shunt ys [] ++ shunt xs [] ++ zs == shunt ys [] ++ zs == shunt ys zs
+    shunt ys (shunt (x : xs) zs) == shunt ys (shunt xs (x : zs)) == shunt ys [] ++ shunt xs [] ++ (x : zs)
+    shunt ys [] ++ shunt (x : xs) [] ++ zs == shunt ys [] ++ shunt xs [x] ++ zs == shunt ys [] ++ shunt xs [] ++ x : zs
 -}
 
 {-
