@@ -1,5 +1,8 @@
 module Chapter_10_my_note where
 
+import           Test.QuickCheck
+import           Test.QuickCheck.Function
+
 doubleAllv1 :: [Integer] -> [Integer]
 doubleAllv1 ls    = [x * 2 | x <- ls]
 
@@ -44,3 +47,20 @@ isSorted :: (Ord t, Num t) => [t] -> Bool
 isSorted []              = True
 isSorted [_]             = True
 isSorted (x : y : xs)    = x < y && isSorted (y : xs)
+
+twice :: (t -> t) -> t -> t
+twice func    = func . func
+
+iter :: Integer -> (t -> t) -> t -> t
+iter times func val
+    | times < 0     = error "wrong time data given"
+    | times == 0    = val
+    | otherwise     = iter (times - 1) func (func val)
+
+base2 :: Integer -> Integer
+base2 n
+    | n >= 0       = iter n (\x -> 2 * x) 1
+    | otherwise    = error "time negative"
+
+propFilter :: Fun Integer Bool -> [Integer] -> Bool
+propFilter func ls    = filter (apply func) ls == filter (apply func) (filter (apply func) ls)
