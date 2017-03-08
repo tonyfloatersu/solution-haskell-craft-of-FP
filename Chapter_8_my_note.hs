@@ -112,7 +112,7 @@ moveIndex moves target    = length [mv | mv <- moves, mv == target]
 movesNameIndex :: [Move] -> [(Move, Int)]
 movesNameIndex moves    = [ (Rock, moveIndex moves Rock)
                           , (Paper, moveIndex moves Paper)
-                          , (Scissors, moveIndex moves Scissors)]
+                          , (Scissors, moveIndex moves Scissors) ]
 
 findMinNum :: [(a, Int)] -> Int
 findMinNum    = minimum . snd . unzip
