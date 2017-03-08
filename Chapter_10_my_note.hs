@@ -1,5 +1,6 @@
 module Chapter_10_my_note where
 
+import           Prelude hiding (unzip, last, init)
 import           Test.QuickCheck
 import           Test.QuickCheck.Function
 
@@ -64,3 +65,42 @@ base2 n
 
 propFilter :: Fun Integer Bool -> [Integer] -> Bool
 propFilter func ls    = filter (apply func) ls == filter (apply func) (filter (apply func) ls)
+
+propFilterTestEnv :: (Fun Integer Bool -> [Integer] -> Bool) -> IO ()
+propFilterTestEnv    = quickCheck
+
+rev :: [a] -> [a]
+rev    = foldr snoc []
+
+snoc :: a -> [a] -> [a]
+snoc x xs    = xs ++ [x]
+
+toNSquareSum :: Integer -> Integer
+toNSquareSum val
+    | val > 0      = foldr (+) 0 (map (\x -> x * x) [1 .. val])
+    | otherwise    = error "scope error"
+
+listSquareSum :: [Integer] -> Integer
+listSquareSum ls    = foldr (+) 0 (map (\x -> x * x) ls)
+
+unzip :: [(a, b)] -> ([a], [b])
+unzip orig    = foldr fragUnzip ([], []) orig
+
+fragUnzip :: (a, b) -> ([a], [b]) -> ([a], [b])
+fragUnzip (p1, p2) (w1, w2)    = (p1 : w1, p2 : w2)
+
+last1 :: [a] -> a
+last1    = foldr1 (\_ x -> x)
+
+last :: [a] -> a
+last ls
+    | not $ null ls    = head $ foldr (\x y -> if null y then [x] else y) [] ls
+    | otherwise        = error "length 0"
+
+init :: [a] -> [a]
+init ls
+    | null ls      = error "length 0"
+    | otherwise    = tail (foldr tailToHead [] ls)
+  where
+    tailToHead :: a -> [a] -> [a]
+    tailToHead frag lst    = if null lst then [frag] else [head lst] ++ [frag] ++ tail lst
