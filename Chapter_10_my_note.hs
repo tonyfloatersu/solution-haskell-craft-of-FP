@@ -287,3 +287,13 @@ changeToLargest base cp1 cp2    = changeSizeTo base (largestSize cp1 cp2)
 mergePics :: Picture -> Picture -> Picture
 mergePics p1 p2    = map zipColor
                      (zip (changeToLargest p1 p1 p2) (changeToLargest p2 p1 p2))
+
+getVert :: Int -> String -> String -> String
+getVert val str remi    = str !! val : remi
+
+rotate901 :: Picture -> Picture
+rotate901 pic    = [foldr (getVert i) [] pic | i <- [0 .. length (head pic) - 1]]
+
+rotate90 :: Picture -> Picture
+rotate90 []        = []
+rotate90 pic     = reverse (map head pic) : reverse (map tail pic)
