@@ -197,3 +197,34 @@ multiSplitLines :: Int -> (a -> Int) -> [a] -> [[a]]
 multiSplitLines _ _ []           = []
 multiSplitLines len f (x : xs)   = getLine len f (x : xs)
                                    : multiSplitLines len f (multiDropLine len f (x : xs))
+
+type Picture = [String]
+
+invertColorDot :: Char -> Char
+invertColorDot ch    = if ch == '#' then '.' else '#'
+
+invertColorLine :: String -> String
+invertColorLine    = map invertColorDot
+
+invertColor :: Picture -> Picture
+invertColor    = map invertColorLine
+
+data PicSize = ReguPic Int Int |
+               IrrePic Int
+               deriving (Eq, Show)
+
+isReg :: Picture -> Bool
+isReg pic    = and [length line == length (head pic) | line <- pic]
+
+picSizeGen :: Picture -> PicSize
+picSizeGen pic    = if isReg pic
+                    then ReguPic (length pic) (length (head pic))
+                    else IrrePic (length pic)
+
+picSizeComp :: Picture -> Picture -> Bool
+picSizeComp p1 p2    = if isReg p1 == isReg p2
+                       then picSizeGen p1 == picSizeGen p2
+                       else error "there is a regular pic and a irregular one"
+
+superimpose :: Picture -> Picture -> Picture
+superimpose    = undefined
