@@ -1,6 +1,6 @@
 module Chapter_10_my_note where
 
-import           Prelude hiding (unzip, last, init)
+import           Prelude hiding (unzip, last, init, getLine)
 import           Test.QuickCheck
 import           Test.QuickCheck.Function
 
@@ -180,3 +180,11 @@ dropLine    = dropSpace . dropWord . dropSpace
 strToLine :: String -> [String]
 strToLine []      = []
 strToLine line    = getWord line : strToLine (dropLine line)
+
+getLine :: Int -> (a -> Int) -> [a] -> [a]
+getLine _ _ []      = []
+getLine len f (x : xs)
+    | f x <= len    = x : getLine (len - f x - 1) f xs
+    | otherwise     = []
+
+-- multiDropLine :: 
