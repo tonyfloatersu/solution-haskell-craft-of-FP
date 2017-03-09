@@ -331,4 +331,4 @@ returnLoan :: Database -> Person -> Book -> Database
 returnLoan db pname bname    = filterFirst (matchName (pname, bname)) db
   where
     matchName :: (Person, Book) -> (Person, Book) -> Bool
-    matchName test taken    = fst test == fst taken && snd test == snd taken
+    matchName test part    = fst test == fst part && snd test == snd part
