@@ -297,3 +297,38 @@ rotate901 pic    = [foldr (getVert i) [] pic | i <- [0 .. length (head pic) - 1]
 rotate90 :: Picture -> Picture
 rotate90 []        = []
 rotate90 pic     = reverse (map head pic) : reverse (map tail pic)
+
+type Person = String
+type Book = String
+
+type Database = [(Person, Book)]
+
+books :: Database -> Person -> [Book]
+books db name    = (fst . unzip) (filter (matchName name) db)
+  where
+    matchName :: Person -> (Person, Book) -> Bool
+    matchName nm pt    = fst pt == nm
+
+borrowers :: Database -> Book -> [Person]
+borrowers db name    = (snd . unzip) (filter (matchName name) db)
+  where
+    matchName :: Book -> (Person, Book) -> Bool
+    matchName nm pt    = snd pt == nm
+
+isBorrowed :: Database -> Book -> Bool
+isBorrowed db name    = name `elem` (snd . unzip) db
+
+numBorrowed :: Database -> Book -> Int
+numBorrowed db name    = length (filter (matchName name) db)
+  where
+    matchName :: Book -> (Person, Book) -> Bool
+    matchName nm pt    = snd pt == nm
+
+makeLoan :: Database -> Person -> Book -> Database
+makeLoan db pname bname    = (pname, bname) : db
+
+returnLoan :: Database -> Person -> Book -> Database
+returnLoan db pname bname    = filterFirst (matchName (pname, bname)) db
+  where
+    matchName :: (Person, Book) -> (Person, Book) -> Bool
+    matchName test taken    = fst test == fst taken && snd test == snd taken
