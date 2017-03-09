@@ -239,7 +239,7 @@ compariation of figures:
   |
   ---> same regularity: ------> all regular ----> same size DONE
                          |                    |
-                         |                    ---> not same size TODO
+                         |                    ---> not same size DONE
                          -----> all irregular
 -}
 
