@@ -3,7 +3,6 @@ module Chapter_10_my_note where
 import           Prelude hiding (unzip, last, init, getLine)
 import           Test.QuickCheck
 import           Test.QuickCheck.Function
-import           Data.Typeable
 
 doubleAllv1 :: [Integer] -> [Integer]
 doubleAllv1 ls    = [x * 2 | x <- ls]
@@ -238,15 +237,15 @@ isSizeReg (IrrePic _)      = False
 compariation of figures:
 -----> not same regularity: ------> False now temporary
   |
-  ---> same regularity: ------> all regular ----> same size
+  ---> same regularity: ------> all regular ----> same size DONE
                          |                    |
-                         |                    ---> not same size
+                         |                    ---> not same size TODO
                          -----> all irregular
 -}
 
-figSizeComp :: PicSize -> PicSize -> Bool
-figSizeComp size1 size2    = isSizeReg size1 == isSizeReg size2
-                             && isSizeReg size1 && size1 == size2
+figRegComp :: PicSize -> PicSize -> Bool
+figRegComp size1 size2    = isSizeReg size1 == isSizeReg size2
+                            && isSizeReg size1
 
 colorPriority :: Char -> Char -> Char
 colorPriority ch1 ch2    = if ch1 == '#' || ch2 == '#'
@@ -254,9 +253,37 @@ colorPriority ch1 ch2    = if ch1 == '#' || ch2 == '#'
                            else '.'
 
 superimpose :: Picture -> Picture -> Picture
-superimpose p1 p2    = if figSizeComp (picSizeGen p1) (picSizeGen p2)
-                       then map zipColor (zip p1 p2)
+superimpose p1 p2    = if figRegComp (picSizeGen p1) (picSizeGen p2)
+                       then if picSizeGen p1 == picSizeGen p2
+                            then map zipColor (zip p1 p2)
+                            else mergePics p1 p2
                        else error "feature not supported... sorry!"
 
 zipColor :: (String, String) -> String
 zipColor (l1, l2)    = zipWith colorPriority l1 l2
+
+_regPicSize :: PicSize -> (Int, Int)
+_regPicSize (ReguPic a b)    = (a, b)
+_regPicSize _                = error "regpicsize error"
+
+regPicSize :: Picture -> (Int, Int)
+regPicSize    = _regPicSize . picSizeGen
+
+largestSize :: Picture -> Picture -> (Int, Int)
+largestSize p1 p2    = (max (fst $ regPicSize p1) (fst $ regPicSize p2),
+                        max (snd $ regPicSize p1) (fst $ regPicSize p2))
+
+blankLineGen :: Int -> String
+blankLineGen val    = concat ["." | _ <- [1 .. val]]
+
+changeSizeTo :: Picture -> (Int, Int) -> Picture -- first int is width, second is height
+changeSizeTo pic (width, height)    =
+    [line ++ blankLineGen (width - length (head pic)) | line <- pic]
+    ++ [blankLineGen width | _ <- [1 .. height - length pic]]
+
+changeToLargest :: Picture -> Picture -> Picture -> Picture
+changeToLargest base cp1 cp2    = changeSizeTo base (largestSize cp1 cp2)
+
+mergePics :: Picture -> Picture -> Picture
+mergePics p1 p2    = map zipColor
+                     (zip (changeToLargest p1 p1 p2) (changeToLargest p2 p1 p2))
