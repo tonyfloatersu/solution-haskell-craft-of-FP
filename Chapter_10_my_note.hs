@@ -3,6 +3,7 @@ module Chapter_10_my_note where
 import           Prelude hiding (unzip, last, init, getLine)
 import           Test.QuickCheck
 import           Test.QuickCheck.Function
+import           Data.Typeable
 
 doubleAllv1 :: [Integer] -> [Integer]
 doubleAllv1 ls    = [x * 2 | x <- ls]
@@ -221,10 +222,41 @@ picSizeGen pic    = if isReg pic
                     then ReguPic (length pic) (length (head pic))
                     else IrrePic (length pic)
 
-picSizeComp :: Picture -> Picture -> Bool
-picSizeComp p1 p2    = if isReg p1 == isReg p2
-                       then picSizeGen p1 == picSizeGen p2
-                       else error "there is a regular pic and a irregular one"
+-- picSizeComp :: Picture -> Picture -> Bool
+-- picSizeComp p1 p2    = if isReg p1 == isReg p2
+--                         then picSizeGen p1 == picSizeGen p2
+--                         else error "there is a regular pic and a irregular one"
+
+-- superimpose :: Picture -> Picture -> Picture
+-- superimpose    = undefined
+
+isSizeReg :: PicSize -> Bool
+isSizeReg (ReguPic _ _)    = True
+isSizeReg (IrrePic _)      = False
+
+{-
+compariation of figures:
+-----> not same regularity: ------> False now temporary
+  |
+  ---> same regularity: ------> all regular ----> same size
+                         |                    |
+                         |                    ---> not same size
+                         -----> all irregular
+-}
+
+figSizeComp :: PicSize -> PicSize -> Bool
+figSizeComp size1 size2    = isSizeReg size1 == isSizeReg size2
+                             && isSizeReg size1 && size1 == size2
+
+colorPriority :: Char -> Char -> Char
+colorPriority ch1 ch2    = if ch1 == '#' || ch2 == '#'
+                           then '#'
+                           else '.'
 
 superimpose :: Picture -> Picture -> Picture
-superimpose    = undefined
+superimpose p1 p2    = if figSizeComp (picSizeGen p1) (picSizeGen p2)
+                       then map zipColor (zip p1 p2)
+                       else error "feature not supported... sorry!"
+
+zipColor :: (String, String) -> String
+zipColor (l1, l2)    = zipWith colorPriority l1 l2
