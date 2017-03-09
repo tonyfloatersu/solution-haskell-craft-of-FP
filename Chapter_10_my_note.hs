@@ -187,4 +187,13 @@ getLine len f (x : xs)
     | f x <= len    = x : getLine (len - f x - 1) f xs
     | otherwise     = []
 
--- multiDropLine :: 
+multiDropLine :: Int -> (a -> Int) -> [a] -> [a]
+multiDropLine _ _ []      = []
+multiDropLine len f (x : xs)    = if len >= f x
+                                  then multiDropLine (len - f x - 1) f xs
+                                  else x : xs
+
+multiSplitLines :: Int -> (a -> Int) -> [a] -> [[a]]
+multiSplitLines _ _ []           = []
+multiSplitLines len f (x : xs)   = getLine len f (x : xs)
+                                   : multiSplitLines len f (multiDropLine len f (x : xs))
