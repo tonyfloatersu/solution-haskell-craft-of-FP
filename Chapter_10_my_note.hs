@@ -332,3 +332,45 @@ returnLoan db pname bname    = filterFirst (matchName (pname, bname)) db
   where
     matchName :: (Person, Book) -> (Person, Book) -> Bool
     matchName test part    = fst test == fst part && snd test == snd part
+
+type DataBase = [(Person, [Book])]
+
+_books :: DataBase -> Person -> [Book]
+_books db name    = (snd . head) (filter (matchName name) db)
+  where
+    matchName :: Person -> (Person, [Book]) -> Bool
+    matchName nm part    = fst part == nm
+
+_borrowers :: DataBase -> Book -> [Person]
+_borrowers db name    = (fst . unzip) (filter (matchName name) db)
+  where
+    matchName :: Book -> (Person, [Book]) -> Bool
+    matchName bk pr    = bk `elem` snd pr
+
+_borrowed :: DataBase -> Book -> Bool
+_borrowed db name    = (not . null) (filter (matchName name) db)
+  where
+    matchName :: Book -> (Person, [Book]) -> Bool
+    matchName bk pr    = bk `elem` snd pr
+
+_numBorrowed :: DataBase -> Person -> Int
+_numBorrowed db name    = (length . snd . unzip) (filter (matchName name) db)
+  where
+    matchName :: Person -> (Person, [Book]) -> Bool
+    matchName nm pr    = nm == fst pr
+
+_makeLoan :: DataBase -> Person -> Book -> DataBase
+_makeLoan db pname bname    = map (insertBook pname bname) db
+  where
+    insertBook :: Person -> Book -> (Person, [Book]) -> (Person, [Book])
+    insertBook pnm bnm pr    = if fst pr == pnm
+                               then (pnm, bnm : snd pr)
+                               else pr
+
+_returnLoan :: DataBase -> Person -> Book -> DataBase
+_returnLoan db pname bname    = map (filterOneBook pname bname) db
+  where
+    filterOneBook :: Person -> Book -> (Person, [Book]) -> (Person, [Book])
+    filterOneBook pnm bnm pr    = if pnm == fst pr
+                                  then (pnm, filterFirst (== bnm) (snd pr))
+                                  else pr
