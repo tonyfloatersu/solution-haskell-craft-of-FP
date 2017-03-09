@@ -374,3 +374,34 @@ _returnLoan db pname bname    = map (filterOneBook pname bname) db
     filterOneBook pnm bnm pr    = if pnm == fst pr
                                   then (pnm, filterFirst (== bnm) (snd pr))
                                   else pr
+
+data Move = Rock | Paper | Scissors
+            deriving (Eq)
+
+instance Show Move where
+         show Rock        = "r"
+         show Paper       = "p"
+         show Scissors    = "s"
+
+convertMove :: Char -> Move
+convertMove 'r'    = Rock
+convertMove 'R'    = Rock
+convertMove 'p'    = Paper
+convertMove 'P'    = Paper
+convertMove 's'    = Scissors
+convertMove 'S'    = Scissors
+convertMove _      = error "do not match"
+
+type Tournament = ([Move], [Move])
+
+outcome :: Move -> Move -> Integer
+outcome Rock Paper        = -1
+outcome Paper Rock        = 1
+outcome Paper Scissors    = -1
+outcome Rock Scissors     = 1
+outcome Scissors Paper    = 1
+outcome Scissors Rock     = -1
+outcome _ _               = 0
+
+tournamentOutcome :: Tournament -> Integer
+tournamentOutcome tour    = sum (zipWith outcome (fst tour) (snd tour))
