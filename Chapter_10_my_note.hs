@@ -104,3 +104,46 @@ init ls
   where
     tailToHead :: a -> [a] -> [a]
     tailToHead frag lst    = if null lst then [frag] else [head lst] ++ [frag] ++ tail lst
+
+type Line = String
+
+formatLine :: Line -> String
+formatLine xs    = xs
+
+formatList :: (a -> String) -> [a] -> String
+formatList formatItem ls    = foldr (++) [] (map formatItem ls)
+
+formatLines :: [Line] -> String
+formatLines    = formatList formatLine
+
+filterFirst :: (a -> Bool) -> [a] -> [a]
+filterFirst _ []           = []
+filterFirst filtCond ls    = if filtCond (head ls)
+                             then tail ls
+                             else head ls : filterFirst filtCond (tail ls)
+
+filterLast :: (a -> Bool) -> [a] -> [a]
+filterLast _ []           = []
+filterLast filtCond ls    = if filtCond (last ls)
+                            then init ls
+                            else filterLast filtCond (init ls) ++ [last ls]
+
+filterLast1 :: (a -> Bool) -> [a] -> [a]
+filterLast1 filtCond ls    = reverse (filterFirst filtCond (reverse ls))
+
+switchMap :: (a -> b) -> (a -> b) -> [a] -> [b]
+switchMap _ _ []          = []
+switchMap fun1 _ [x]      = [fun1 x]
+switchMap fun1 fun2 (x1 : x2 : rest)    = fun1 x1 : fun2 x2 : switchMap fun1 fun2 rest
+
+split :: [a] -> ([a], [a])
+split []                  = ([], [])
+split [x]                 = ([x], [])
+split (x1 : x2 : rest)    = (x1 : fst (split rest), x2 : snd (split rest))
+
+merge :: ([a], [a]) -> [a]
+merge (x : xs, y : ys)    = x : y : merge (xs, ys)
+merge (x : _, [])         = [x]
+merge (_, _)              = []
+
+-- g (foldr1 g xs) (foldr1 g ys) == foldr1 g (xs ++ ys)
