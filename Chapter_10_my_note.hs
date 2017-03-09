@@ -122,6 +122,8 @@ filterFirst filtCond ls    = if filtCond (head ls)
                              then tail ls
                              else head ls : filterFirst filtCond (tail ls)
 
+-- returnLoan use filterFirst or all the book will come out...
+
 filterLast :: (a -> Bool) -> [a] -> [a]
 filterLast _ []           = []
 filterLast filtCond ls    = if filtCond (last ls)
