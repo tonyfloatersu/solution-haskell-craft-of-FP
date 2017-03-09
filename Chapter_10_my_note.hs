@@ -149,3 +149,34 @@ merge (x : _, [])         = [x]
 merge (_, _)              = []
 
 -- g (foldr1 g xs) (foldr1 g ys) == foldr1 g (xs ++ ys)
+
+dropUntil :: (a -> Bool) -> [a] -> [a]
+dropUntil _ []             = []
+dropUntil cond (l : ls)    = if cond l
+                             then l : ls
+                             else dropUntil cond ls
+
+isSpace :: Char -> Bool
+isSpace ch    = ch `elem` [' ', '\n', '\r', '\t']
+
+dropSpace :: String -> String
+dropSpace    = dropUntil (not . isSpace)
+
+dropWord :: String -> String
+dropWord    = dropUntil isSpace
+
+getUntil :: (a -> Bool) -> [a] -> [a]
+getUntil _ []          = []
+getUntil f (x : xs)    = if f x
+                         then []
+                         else x : getUntil f xs
+
+getWord :: String -> String
+getWord line    = getUntil isSpace (dropSpace line)
+
+dropLine :: String -> String
+dropLine    = dropSpace . dropWord . dropSpace
+
+strToLine :: String -> [String]
+strToLine []      = []
+strToLine line    = getWord line : strToLine (dropLine line)
