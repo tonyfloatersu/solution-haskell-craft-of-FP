@@ -1,5 +1,7 @@
 module Chapter_11_my_note where
 
+import           Test.QuickCheck
+
 infixl 9 >.>
 
 (>.>) :: (a -> b) -> (b -> c) -> (a -> c)
@@ -29,3 +31,37 @@ invseq f    = \v2 v1 -> f v1 v2
 
 mapFuns2 :: [a -> b] -> a -> [b]
 mapFuns2 fs val    = map ($ val) fs
+
+_curry :: ((a, b) -> c) -> a -> b -> c
+_curry f    = \x y -> f (x, y)
+
+_uncurry :: (a -> b -> c) -> (a, b) -> c
+_uncurry f    = \(x, y) -> f x y
+
+_anotherCurry :: ((a, b) -> c) -> a -> b -> c
+_anotherCurry f x y    = f (x, y)
+
+_anotherUncurry :: (a -> b -> c) -> (a, b) -> c
+_anotherUncurry f (x, y)    = f x y
+
+curry3 :: ((a, b, c) -> d) -> a -> b -> c -> d
+curry3 f x y z    = f (x, y, z)
+
+uncurry3 :: (a -> b -> c -> d) -> (a, b, c) -> d
+uncurry3 f (x, y, z)    = f x y z
+
+curryList :: ([a] -> d) -> a -> [a] -> d
+curryList f val ls    = f (val : ls)
+
+uncurryList :: (a -> [a] -> d) -> [a] -> d
+uncurryList f ls    = f (head ls) (tail ls)
+
+prop_uncurryZip_unzip :: Eq a => Eq b => ([a], [b]) -> Property
+prop_uncurryZip_unzip tester@ (lsa, lsb)    =
+    (length lsa == length lsb) ==>
+    (unzip . uncurry zip) tester == tester
+
+_prop_uncurryZip_unzip :: Eq a => Eq b => ([a], [b]) -> Bool
+_prop_uncurryZip_unzip tester@ (lsa, lsb)    = if length lsa == length lsb
+                                               then (unzip . uncurry zip) tester == tester
+                                               else True
