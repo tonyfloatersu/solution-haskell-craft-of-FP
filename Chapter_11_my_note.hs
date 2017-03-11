@@ -1,6 +1,7 @@
 module Chapter_11_my_note where
 
 import           Test.QuickCheck
+import           Data.Function
 
 infixl 9 >.>
 
@@ -65,3 +66,31 @@ _prop_uncurryZip_unzip :: Eq a => Eq b => ([a], [b]) -> Bool
 _prop_uncurryZip_unzip tester@ (lsa, lsb)    = if length lsa == length lsb
                                                then (unzip . uncurry zip) tester == tester
                                                else True
+
+twice :: (a -> a) -> (a -> a)
+twice f    = f . f
+
+_succ :: Integer -> Integer
+_succ a    = a + 1
+
+iter :: Integer -> (a -> a) -> (a -> a)
+iter n f
+    | n > 0        = f . iter (n - 1) f
+    | otherwise    = id
+
+double :: Integer -> Integer
+double    = (* 2)
+
+_sq :: Integer -> Integer
+_sq d    = d * d
+
+_iter :: Integer -> (a -> a) -> (a -> a)
+_iter n f    = foldr (.) id (replicate (fromInteger n :: Int) f)
+
+__iter :: Integer -> (a -> a) -> (a -> a)
+__iter n f    = foldr (.) id (listcreate n f)
+
+listcreate :: Integer -> a -> [a]
+listcreate    = fix (\f n p -> if n > 0
+                               then p : f (n - 1) p
+                               else [])
