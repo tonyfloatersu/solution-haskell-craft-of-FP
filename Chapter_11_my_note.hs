@@ -21,5 +21,11 @@ isBlank    = \ch -> not (ch `elem` "\t\n")
 total :: (Integer -> Integer) -> (Integer -> Integer)
 total f    = \n -> foldr ((+) . f) 0 [0 .. n]
 
+total2 :: (Integer -> Integer) -> (Integer -> Integer)
+total2 f    = sum . map f . \n -> [0 .. n]
+
 invseq :: (a -> b -> c) -> (b -> a -> c)
 invseq f    = \v2 v1 -> f v1 v2
+
+mapFuns2 :: [a -> b] -> a -> [b]
+mapFuns2 fs val    = map ($ val) fs
