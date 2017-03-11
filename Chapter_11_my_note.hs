@@ -94,3 +94,6 @@ listcreate :: Integer -> a -> [a]
 listcreate    = fix (\f n p -> if n > 0
                                then p : f (n - 1) p
                                else [])
+
+_iter_ :: Integer -> (a -> a) -> (a -> a)
+_iter_ n f    = foldr (.) id [f | _ <- [1 .. n]]
