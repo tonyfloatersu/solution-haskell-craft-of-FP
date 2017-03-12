@@ -4,9 +4,7 @@ import           Test.QuickCheck
 import           Data.Function
 
 infixl 9 >.>
-
 (>.>) :: (a -> b) -> (b -> c) -> (a -> c)
-
 g >.> f = f . g
 
 composeList :: [a -> a] -> (a -> a)
