@@ -97,3 +97,18 @@ listcreate    = fix (\f n p -> if n > 0
 
 _iter_ :: Integer -> (a -> a) -> (a -> a)
 _iter_ n f    = foldr (.) id [f | _ <- [1 .. n]]
+
+getEvens :: [Integer] -> [Integer]
+getEvens    = filter ((== 0) . (`mod` 2))
+
+mapFuns3 :: [a -> b] -> a -> [b]
+mapFuns3 fs val    = map (applyVal val) fs
+  where
+    applyVal :: a -> (a -> b) -> b
+    applyVal val' f    = f val'
+
+slope :: (Float -> Float) -> (Float -> Float)
+slope f    = \x -> (f (x + 1.0e-5) - f (x - 1.0e-5)) / 2.0e-5
+
+integrate :: (Float -> Float) -> (Float -> Float -> Float)
+integrate f x y    = sum $ map ((* 1.0e-5) . f) [x, x + 1.0e-5 .. y]
