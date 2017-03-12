@@ -43,5 +43,19 @@ _bprintPicture    = putStr . concat . map ((++ "\n") . map (\b -> if b
                                                                   then '#'
                                                                   else '.'))
 
+createPic :: Int -> Int -> Picture
+createPic h w    = replicate h ((concat . replicate w) ".")
+
+addPt :: (Int, Int) -> Picture -> Picture
+addPt (h, w) pic    = take h pic ++ [take w (pic !! h) ++ "#" ++ drop (w + 1) (pic !! h)]
+                      ++ drop (h + 1) pic
+
+addPts :: [(Int, Int)] -> Picture -> Picture
+addPts pts pic    = foldr addPt pic pts
+
+qualify :: [(Int, Int)] -> (Int, Int) -> [(Int, Int)]
+qualify ptl sz    = filter (\(y, x) -> (fst sz >= y) && (x >= 0)
+                                       && (snd sz >= x) && (y >= 0)) ptl
+
 makePicture :: Int -> Int -> [(Int, Int)] -> Picture
-makePicture height width pts    = undefined
+makePicture w h pts    = addPts (qualify pts (h, w)) (createPic h w)
