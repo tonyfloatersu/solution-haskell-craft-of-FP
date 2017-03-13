@@ -3,6 +3,7 @@ module Chapter_12_my_note where
 import           Pictures (horse)
 import           Test.QuickCheck
 import           Chapter_8_my_note (randInt)
+import           Prelude hiding ((<*>))
 
 type Picture = [String]
 
@@ -136,3 +137,38 @@ train :: Moves -> [Strategy] -> Strategy
 train moves strs    = bestStrategy !! (fromInteger (randInt ((toInteger . length) strs)) :: Int)
   where bestStrategy :: [Strategy]
         bestStrategy    = maxWins strs moves
+
+type RegExp = String -> Bool
+
+epsilon :: RegExp
+epsilon    = (== "")
+
+char :: Char -> RegExp
+char ch    = (== [ch])
+
+(|||) :: RegExp -> RegExp -> RegExp
+e1 ||| e2    = \x -> e1 x || e2 x
+
+splits :: String -> [(String, String)]
+splits str    = map (`splitAt` str) [1 .. length str]
+
+(<*>) :: RegExp -> RegExp -> RegExp
+e1 <*> e2    = \x -> or [e1 y && e2 z | (y, z) <- splits x]
+
+star :: RegExp -> RegExp
+star p    = epsilon ||| (p <*> star p)
+
+a, b :: RegExp
+a    = char 'a'
+b    = char 'b'
+
+test1 :: RegExp
+test1    = star ((a ||| b) <*> (a ||| b))
+
+-- (a ||| b) <*> (a ||| b) matches "aa" "bb" "ab" "ba"
+-- test1 matches with 2n string with "ab" "aa" "bb" "ba"
+
+test2 :: RegExp
+test2    = star test1
+
+-- test2 do the same thing as test1 do
