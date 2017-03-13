@@ -89,6 +89,16 @@ data Move = Rock | Paper | Scissors
 
 type Strategy = [Move] -> Move
 
+beat :: Move -> Move
+beat Rock  = Paper
+beat Paper = Scissors
+beat _     = Rock
+
+lose :: Move -> Move
+lose Rock  = Scissors
+lose Paper = Rock
+lose _     = Paper
+
 alternate :: Strategy -> Strategy -> [Move] -> Move
 alternate str1 str2 moves    = map ($ moves) [str1, str2] !! (length moves `mod` 2)
 
@@ -101,3 +111,28 @@ sTossList ls    = ls !! (fromInteger (randInt ((toInteger . length) ls)) :: Int)
 
 alternativeList :: [Strategy] -> [Move] -> Strategy
 alternativeList strs moves    = strs !! (length moves `mod` length strs)
+
+type Moves = [Move]
+
+counterMoves :: Moves -> Strategy -> Moves
+counterMoves mv str    = map (str . flip take mv) [1 .. length mv]
+
+mvCompete :: Move -> Move -> Integer
+mvCompete mv1 mv2
+    | mv1 == mv2         = 0
+    | beat mv1 == mv2    = 1
+    | otherwise          = -1
+
+outcome :: Strategy -> Moves -> Integer
+outcome str mvs    = sum (zipWith mvCompete (counterMoves mvs str) mvs)
+
+outcomes :: [Strategy] -> Moves -> [Integer]
+outcomes strs mvs    = map (`outcome` mvs) strs
+
+maxWins :: [Strategy] -> Moves -> [Strategy]
+maxWins strs moves    = filter (\x -> outcome x moves == maximum (outcomes strs moves)) strs
+
+train :: Moves -> [Strategy] -> Strategy
+train moves strs    = bestStrategy !! (fromInteger (randInt ((toInteger . length) strs)) :: Int)
+  where bestStrategy :: [Strategy]
+        bestStrategy    = maxWins strs moves
