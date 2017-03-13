@@ -1,6 +1,7 @@
 module Chapter_12_my_note where
 
 import           Pictures (horse)
+import           Test.QuickCheck
 
 type Picture = [String]
 
@@ -76,3 +77,8 @@ blackList pic    = filter (`isBlack` pic) (uncurry pointsCreate (picSize pic))
 
 picToRep :: Picture -> (Int, Int, [(Int, Int)])
 picToRep pic    = ((fst . picSize) pic, (snd . picSize) pic, blackList pic)
+
+type Rep = (Int, Int, [(Int, Int)])
+
+repRotate :: Rep -> Rep
+repRotate (w, h, locs)    = (h, w, map (\(y, x) -> (x, h - 1 - y)) locs)
