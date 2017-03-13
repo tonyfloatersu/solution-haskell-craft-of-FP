@@ -2,6 +2,7 @@ module Chapter_12_my_note where
 
 import           Pictures (horse)
 import           Test.QuickCheck
+import           Chapter_8_my_note (randInt)
 
 type Picture = [String]
 
@@ -82,3 +83,21 @@ type Rep = (Int, Int, [(Int, Int)])
 
 repRotate :: Rep -> Rep
 repRotate (w, h, locs)    = (h, w, map (\(y, x) -> (x, h - 1 - y)) locs)
+
+data Move = Rock | Paper | Scissors
+            deriving (Show, Eq)
+
+type Strategy = [Move] -> Move
+
+alternate :: Strategy -> Strategy -> [Move] -> Move
+alternate str1 str2 moves    = map ($ moves) [str1, str2] !! (length moves `mod` 2)
+
+sToss :: Strategy -> Strategy -> Strategy
+sToss str1 str2    = [str1, str2] !! (fromInteger (randInt 2) :: Int)
+
+sTossList :: [Strategy] -> Strategy
+sTossList []    = \moves -> head moves
+sTossList ls    = ls !! (fromInteger (randInt ((toInteger . length) ls)) :: Int)
+
+alternativeList :: [Strategy] -> [Move] -> Strategy
+alternativeList strs moves    = strs !! (length moves `mod` length strs)
