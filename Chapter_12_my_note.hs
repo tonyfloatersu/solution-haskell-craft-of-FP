@@ -59,3 +59,20 @@ qualify ptl sz    = filter (\(y, x) -> (fst sz >= y) && (x >= 0)
 
 makePicture :: Int -> Int -> [(Int, Int)] -> Picture
 makePicture w h pts    = addPts (qualify pts (h, w)) (createPic h w)
+
+picSize :: Picture -> (Int, Int)
+picSize pic    = (length (head pic), length pic)
+
+pointsCreate :: Int -> Int -> [(Int, Int)]
+pointsCreate w h    = zip
+    ((concat . (map (concat . replicate w))) (map (\x -> [x]) [0 .. (h - 1)]))
+    ((concat . replicate h) [0 .. (w - 1)])
+
+isBlack :: (Int, Int) -> Picture -> Bool
+isBlack (h, w) pic    = (pic !! h) !! w == '#'
+
+blackList :: Picture -> [(Int, Int)]
+blackList pic    = filter (`isBlack` pic) (uncurry pointsCreate (picSize pic))
+
+picToRep :: Picture -> (Int, Int, [(Int, Int)])
+picToRep pic    = ((fst . picSize) pic, (snd . picSize) pic, blackList pic)
