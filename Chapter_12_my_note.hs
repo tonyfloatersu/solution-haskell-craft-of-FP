@@ -212,3 +212,16 @@ zeroTailProp    = not . char '0' . init
 derivMatch :: RegExp
 derivMatch    = partlyMatch (char '.') (== 1) &&& partlyMatch latinMatch (== 0)
                 &&& headDigit &&& zeroHeadProp &&& zeroTailProp
+
+abComposeMost2a :: RegExp
+abComposeMost2a    = partlyMatch (char 'a') (<= 2) &&& star (a ||| b)
+
+abComposeWith2a :: RegExp
+abComposeWith2a    = partlyMatch (char 'a') (== 2) &&& star (a ||| b)
+
+length3withab :: RegExp
+length3withab    = (a ||| b) <*> (a ||| b) <*> (a ||| b)
+
+composeabnoaabb :: RegExp
+composeabnoaabb    = star (a ||| b) &&& partlyMatch (a <*> a) (== 0)
+                     &&& partlyMatch (b <*> b) (== 0)
