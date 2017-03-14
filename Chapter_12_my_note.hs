@@ -201,7 +201,7 @@ digitMatch    = foldr1 (|||) (map char ['0' .. '9'])
 
 zeroHeadProp :: RegExp
 zeroHeadProp    = ((>= 2) . length) &&& rnot ((char '0' . (\x -> [x]) . head)
-                                                 &&& (digitMatch . (\x -> [x]) . (!! 1)))
+                                               &&& (digitMatch . (\x -> [x]) . (!! 1)))
 
 headDigit :: RegExp
 headDigit    = digitMatch . (\x -> [x]) . head
@@ -248,3 +248,20 @@ nplus n m f    = n f . m f
 
 ntimes :: Natural a -> Natural a -> Natural a
 ntimes n m    = n . m
+
+type Position = (Int, Int)
+
+type Bitmap = Position -> Pixel
+
+type Pixel = Char
+
+data Location = FloatExp Int Int
+              | LocalExp Int Int Int Int
+              deriving (Eq, Show)
+
+bitToPic :: [Bitmap] -> Location -> Picture
+bitToPic bitms (FloatExp widt high)    = undefined
+bitToPic bitms (LocalExp lx ly rx ry)    = undefined
+
+picToBit :: Picture -> [Bitmap]
+picToBit pict@ [line]    = undefined
