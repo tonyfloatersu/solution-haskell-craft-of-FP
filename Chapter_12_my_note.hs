@@ -192,3 +192,23 @@ partlyMatch e i    = i . length . filter e . subseqs
 plus, option :: RegExp -> RegExp
 option e    = partlyMatch e (== 0) ||| partlyMatch e (== 1)
 plus e      = partlyMatch e (>= 2)
+
+latinMatch :: RegExp
+latinMatch    = foldr1 (|||) (map char (['a' .. 'z'] ++ ['A' .. 'Z']))
+
+digitMatch :: RegExp
+digitMatch    = foldr1 (|||) (map char ['0' .. '9'])
+
+zeroHeadProp :: RegExp
+zeroHeadProp    = ((>= 2) . length) &&& rnot ((char '0' . (\x -> [x]) . head)
+                                                 &&& (digitMatch . (\x -> [x]) . (!! 1)))
+
+headDigit :: RegExp
+headDigit    = digitMatch . (\x -> [x]) . head
+
+zeroTailProp :: RegExp
+zeroTailProp    = not . char '0' . init
+
+derivMatch :: RegExp
+derivMatch    = partlyMatch (char '.') (== 1) &&& partlyMatch latinMatch (== 0)
+                &&& headDigit &&& zeroHeadProp &&& zeroTailProp
