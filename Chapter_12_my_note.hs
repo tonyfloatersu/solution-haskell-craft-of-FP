@@ -149,6 +149,12 @@ char ch    = (== [ch])
 (|||) :: RegExp -> RegExp -> RegExp
 e1 ||| e2    = \x -> e1 x || e2 x
 
+(&&&) :: RegExp -> RegExp -> RegExp
+e1 &&& e2    = \x -> e1 x && e2 x
+
+rnot :: RegExp -> RegExp
+rnot e    = not . e
+
 splits :: String -> [(String, String)]
 splits str    = map (`splitAt` str) [1 .. length str]
 
@@ -172,3 +178,16 @@ test2 :: RegExp
 test2    = star test1
 
 -- test2 do the same thing as test1 do
+
+prop_test12 :: String -> Bool
+prop_test12 str    = test1 str == test2 str
+
+subseqs :: String -> [String]
+subseqs str    = map fst (concat (map (splits . snd . (`splitAt` str)) [0 .. length str]))
+
+partlyMatch :: RegExp -> (Int -> Bool) -> RegExp
+partlyMatch e i    = i . length . filter e . subseqs
+
+plus, option :: RegExp -> RegExp
+option e    = partlyMatch e (== 0) ||| partlyMatch e (== 1)
+plus e    = partlyMatch e (>= 2)
