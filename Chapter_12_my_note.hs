@@ -225,3 +225,26 @@ length3withab    = (a ||| b) <*> (a ||| b) <*> (a ||| b)
 composeabnoaabb :: RegExp
 composeabnoaabb    = star (a ||| b) &&& partlyMatch (a <*> a) (== 0)
                      &&& partlyMatch (b <*> b) (== 0)
+
+type Natural a = (a -> a) -> (a -> a)
+
+zero :: Natural a
+zero _    = id
+
+one :: Natural a
+one f    = f
+
+two :: Natural a
+two f    = f . f
+
+int :: Natural Int -> Int
+int n    = n (+1) 0
+
+nsucc :: Natural a -> Natural a
+nsucc now f    = f . now f
+
+nplus :: Natural a -> Natural a -> Natural a
+nplus n m f    = n f . m f
+
+ntimes :: Natural a -> Natural a -> Natural a
+ntimes n m    = n . m
