@@ -172,13 +172,8 @@ b    = char 'b'
 test1 :: RegExp
 test1    = star ((a ||| b) <*> (a ||| b))
 
--- (a ||| b) <*> (a ||| b) matches "aa" "bb" "ab" "ba"
--- test1 matches with 2n string with "ab" "aa" "bb" "ba"
-
 test2 :: RegExp
 test2    = star test1
-
--- test2 do the same thing as test1 do
 
 prop_test12 :: String -> Bool
 prop_test12 str    = test1 str == test2 str
