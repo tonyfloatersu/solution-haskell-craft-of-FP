@@ -252,7 +252,7 @@ type Pixel = Char
 
 data Location = FloatExp Int Int
               | LocalExp Int Int Int Int
-              deriving (Eq, Show)
+                deriving (Eq, Show)
 
 bitToPic :: Bitmap -> Location -> Picture
 bitToPic bitms (FloatExp widt high)      = map (bitToLine bitms widt) [0 .. high - 1]
