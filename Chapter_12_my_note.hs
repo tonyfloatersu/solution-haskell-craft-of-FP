@@ -134,7 +134,8 @@ maxWins :: [Strategy] -> Moves -> [Strategy]
 maxWins strs moves    = filter (\x -> outcome x moves == maximum (outcomes strs moves)) strs
 
 train :: Moves -> [Strategy] -> Strategy
-train moves strs    = bestStrategy !! (fromInteger (randInt ((toInteger . length) strs)) :: Int)
+train moves strs    = bestStrategy !! (fromInteger
+                                        (randInt ((toInteger . length) strs)) :: Int)
   where bestStrategy :: [Strategy]
         bestStrategy    = maxWins strs moves
 
@@ -190,4 +191,4 @@ partlyMatch e i    = i . length . filter e . subseqs
 
 plus, option :: RegExp -> RegExp
 option e    = partlyMatch e (== 0) ||| partlyMatch e (== 1)
-plus e    = partlyMatch e (>= 2)
+plus e      = partlyMatch e (>= 2)
