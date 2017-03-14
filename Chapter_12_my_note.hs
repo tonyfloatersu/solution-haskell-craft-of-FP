@@ -259,9 +259,16 @@ data Location = FloatExp Int Int
               | LocalExp Int Int Int Int
               deriving (Eq, Show)
 
-bitToPic :: [Bitmap] -> Location -> Picture
-bitToPic bitms (FloatExp widt high)    = undefined
-bitToPic bitms (LocalExp lx ly rx ry)    = undefined
+bitToPic :: Bitmap -> Location -> Picture
+bitToPic bitms (FloatExp widt high)    = map (bitToLine bitms widt) [0 .. high - 1]
+bitToPic bitms (LocalExp lx ly rx ry)    = map (bitToLine bitms (rx - lx)) [0 .. ry - ly - 1]
 
-picToBit :: Picture -> [Bitmap]
-picToBit pict@ [line]    = undefined
+bitToLine :: Bitmap -> Int -> Int -> String
+bitToLine bitms width height    = concatMap (\x -> [bitms (x, height)]) [0 .. width - 1]
+
+-- change a line of bitms to picture line
+
+picToBit :: Picture -> Bitmap
+picToBit pic (x, y)    = if x < (length . head) pic && y < length pic
+                         then (pic !! y) !! x
+                         else error "out of scope."
