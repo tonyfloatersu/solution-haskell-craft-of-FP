@@ -260,7 +260,7 @@ data Location = FloatExp Int Int
               deriving (Eq, Show)
 
 bitToPic :: Bitmap -> Location -> Picture
-bitToPic bitms (FloatExp widt high)    = map (bitToLine bitms widt) [0 .. high - 1]
+bitToPic bitms (FloatExp widt high)      = map (bitToLine bitms widt) [0 .. high - 1]
 bitToPic bitms (LocalExp lx ly rx ry)    = map (bitToLine bitms (rx - lx)) [0 .. ry - ly - 1]
 
 bitToLine :: Bitmap -> Int -> Int -> String
