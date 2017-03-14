@@ -266,8 +266,6 @@ bitToPic bitms (LocalExp lx ly rx ry)    = map (bitToLine bitms (rx - lx)) [0 ..
 bitToLine :: Bitmap -> Int -> Int -> String
 bitToLine bitms width height    = concatMap (\x -> [bitms (x, height)]) [0 .. width - 1]
 
--- change a line of bitms to picture line
-
 picToBit :: Picture -> Bitmap
 picToBit pic (x, y)    = if x < (length . head) pic && y < length pic
                          then (pic !! y) !! x
