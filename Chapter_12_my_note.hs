@@ -4,6 +4,7 @@ import           Pictures (horse)
 import           Test.QuickCheck
 import           Chapter_8_my_note (randInt)
 import           Prelude hiding ((<*>))
+import           Data.Map (Map, fromList, (!))
 
 type Picture = [String]
 
@@ -265,3 +266,21 @@ picToBit :: Picture -> Bitmap
 picToBit pic (x, y)    = if x < (length . head) pic && y < length pic
                          then (pic !! y) !! x
                          else error "out of scope."
+
+mapPicTo :: Picture -> Map (Int, Int) Pixel
+mapPicTo pic    = fromList (zip (createDots pic) (picToChars pic (createDots pic)))
+
+mapPicToBit :: Picture -> Bitmap
+mapPicToBit pic val    = mapPicTo pic ! val
+
+createDots :: Picture -> [(Int, Int)]
+createDots pic    = concatMap (\x -> (map (\y -> (x, y)) [0 .. width - 1])) [0 .. height - 1]
+  where
+    height :: Int
+    height    = length pic
+    width :: Int
+    width    = (length . head) pic
+
+picToChars :: Picture -> [(Int, Int)] -> String
+picToChars pic    = map (\(h, w) -> (pic !! h) !! w)
+
