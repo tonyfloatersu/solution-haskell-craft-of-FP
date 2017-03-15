@@ -290,3 +290,6 @@ mapBitToPic mapbase (LocalExp lx ly rx ry)    =
 
 mapToLine :: Map Position Pixel -> Int -> Int -> String
 mapToLine mapbase width height    = concatMap (\x -> [mapbase ! (height, x)]) [0 .. width - 1]
+
+-- fuck, change all Bitmap to picture, change picture, then change back to bitmap.
+-- fuck, do not write.
