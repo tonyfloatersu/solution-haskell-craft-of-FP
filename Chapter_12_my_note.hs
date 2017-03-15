@@ -276,11 +276,17 @@ mapPicToBit pic val    = mapPicTo pic ! val
 createDots :: Picture -> [(Int, Int)]
 createDots pic    = concatMap (\x -> (map (\y -> (x, y)) [0 .. width - 1])) [0 .. height - 1]
   where
-    height :: Int
+    height, width :: Int
     height    = length pic
-    width :: Int
-    width    = (length . head) pic
+    width     = (length . head) pic
 
 picToChars :: Picture -> [(Int, Int)] -> String
 picToChars pic    = map (\(h, w) -> (pic !! h) !! w)
 
+mapBitToPic :: Map Position Pixel -> Location -> Picture
+mapBitToPic mapbase (FloatExp widt high)      = map (mapToLine mapbase widt) [0 .. high - 1]
+mapBitToPic mapbase (LocalExp lx ly rx ry)    =
+    map (mapToLine mapbase (rx - lx)) [0 .. ry - ly - 1]
+
+mapToLine :: Map Position Pixel -> Int -> Int -> String
+mapToLine mapbase width height    = concatMap (\x -> [mapbase ! (height, x)]) [0 .. width - 1]
