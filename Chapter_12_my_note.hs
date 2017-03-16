@@ -8,7 +8,7 @@ import           Data.Map (Map, fromList, (!))
 import           System.Console.ANSI
 import           Chapter_11_my_note ((>.>))
 import           Chapter_10_my_note (dropUntil, getUntil)
-
+import           Data.Char (toLower)
 
 type Picture = [String]
 
@@ -343,7 +343,9 @@ orderPair :: (Int, Word) -> (Int, Word) -> Bool
 orderPair (n1, w1) (n2, w2)    = w1 `smallerThan` w2 || (w1 == w2 && n1 < n2)
 
 smallerThan :: Word -> Word -> Bool
-(w1 : wd1) `smallerThan` (w2 : wd2)    = if w1 == w2 then wd1 `smallerThan` wd2 else w1 < w2
+(w1 : wd1) `smallerThan` (w2 : wd2)    = if toLower w1 == toLower w2
+                                         then wd1 `smallerThan` wd2
+                                         else w1 < w2
 _ `smallerThan` []                     = False
 [] `smallerThan` (_ : _)               = True
 
@@ -383,3 +385,31 @@ weakShowIndex (datas, word)    = word ++ concat (replicate (__width - length wor
                                  ++ concatMap ((++ ", ") . show) (init datas)
                                  ++ (show . last) datas
   where __width    = 15 :: Int
+
+mergeList :: [Int] -> [[Int]]
+mergeList    = map (: [])
+
+simplifyList :: [[Int]] -> [[Int]]
+simplifyList []          = []
+simplifyList [x]         = [x]
+simplifyList (x : xs)    = if last x + 1 == (head . head) xs
+                           then simplifyList ((x ++ head xs) : tail xs)
+                           else x : simplifyList xs
+
+strongList :: [Int] -> [[Int]]
+strongList    = simplifyList . mergeList
+
+strongExpress :: [Int] -> [String]
+strongExpress ls    = map (\x -> if length x == 1
+                                 then (show . head) x
+                                 else (show . head) x ++ "-"
+                                      ++ (show . last) x) (strongList ls)
+
+strongShowIndex :: ([Int], Word) -> String
+strongShowIndex (datas, word)    = word ++ concat (replicate (__width - length word) " ")
+                                   ++ concatMap (++ ", ") ((init . strongExpress) datas)
+                                   ++ (last . strongExpress) datas
+  where __width    = 15 :: Int
+
+strongPrintIndex :: [([Int], Word)] -> IO ()
+strongPrintIndex index    = putStrLn (concatMap ((++ "\n") . strongShowIndex) index)
