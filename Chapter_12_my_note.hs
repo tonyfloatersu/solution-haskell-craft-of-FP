@@ -3,8 +3,10 @@ module Chapter_12_my_note where
 import           Pictures (horse)
 import           Test.QuickCheck
 import           Chapter_8_my_note (randInt)
-import           Prelude hiding ((<*>))
+import           Prelude hiding ((<*>), Word)
 import           Data.Map (Map, fromList, (!))
+import           System.Console.ANSI
+import           Chapter_11_my_note ((>.>))
 
 type Picture = [String]
 
@@ -293,3 +295,47 @@ mapToLine mapbase width height    = concatMap (\x -> [mapbase ! (height, x)]) [0
 
 -- fuck, change all Bitmap to picture, change picture, then change back to bitmap.
 -- fuck, do not write.
+
+demo :: IO ()
+demo = do
+    setCursorPosition 5 0
+    setTitle "ANSI Terminal Short Example"
+
+    setSGR [ SetConsoleIntensity BoldIntensity
+           , SetColor Foreground Vivid Red
+           ]
+    putStr "Hello"
+
+    setSGR [ SetConsoleIntensity NormalIntensity
+           , SetColor Foreground Vivid White
+           , SetColor Background Dull Blue
+           ]
+    putStrLn "World!"
+
+type Doc = String
+type Line = String
+type Word = String
+
+makeIndex :: Doc -> [([Int], Word)]
+makeIndex    = shorten . amalgamate . makeLists . sortLs . allNumWords . numLines . line
+
+shorten :: [([Int], Word)] -> [([Int], Word)]
+shorten    = undefined
+
+amalgamate :: [([Int], Word)] -> [([Int], Word)]
+amalgamate    = undefined
+
+makeLists :: [(Int, Word)] -> [([Int], Word)]
+makeLists    = undefined
+
+sortLs :: [(Int, Word)] -> [(Int, Word)]
+sortLs    = undefined
+
+allNumWords :: [(Int, Line)] -> [(Int, Word)]
+allNumWords    = undefined
+
+numLines :: [Line] -> [(Int, Line)]
+numLines    = undefined
+
+line :: Doc -> [Line]
+line    = undefined
