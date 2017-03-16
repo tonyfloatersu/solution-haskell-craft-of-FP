@@ -328,10 +328,20 @@ amalgamate :: [([Int], Word)] -> [([Int], Word)]
 amalgamate    = undefined
 
 makeLists :: [(Int, Word)] -> [([Int], Word)]
-makeLists    = undefined
+makeLists    = map (\(x, y) -> ([x], y))
 
 sortLs :: [(Int, Word)] -> [(Int, Word)]
-sortLs    = undefined
+sortLs []    = []
+sortLs (p : ps)    = sortLs [q | q <- ps, orderPair q p] ++ [p]
+                     ++ sortLs [q | q <- ps, orderPair p q]
+
+orderPair :: (Int, Word) -> (Int, Word) -> Bool
+orderPair (n1, w1) (n2, w2)    = w1 `smallerThan` w2 || (w1 == w2 && n1 < n2)
+
+smallerThan :: Word -> Word -> Bool
+(w1 : wd1) `smallerThan` (w2 : wd2)    = if w1 == w2 then wd1 `smallerThan` wd2 else w1 < w2
+_ `smallerThan` []                     = False
+[] `smallerThan` (_ : _)               = True
 
 allNumWords :: [(Int, Line)] -> [(Int, Word)]
 allNumWords    = concatMap numWords
