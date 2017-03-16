@@ -374,3 +374,12 @@ _lines :: Doc -> [Line]
 _lines []       = []
 _lines docum    = getUntil (== '\n') docum :
                   _lines ((dropUntil (/= '\n') . dropUntil (== '\n')) docum)
+
+weakPrintIndex :: [([Int], Word)] -> IO ()
+weakPrintIndex index    = putStrLn (concatMap ((++ "\n") . weakShowIndex) index)
+
+weakShowIndex :: ([Int], Word) -> String
+weakShowIndex (datas, word)    = word ++ concat (replicate (__width - length word) " ")
+                                 ++ concatMap ((++ ", ") . show) (init datas)
+                                 ++ (show . last) datas
+  where __width    = 15 :: Int
