@@ -7,6 +7,8 @@ import           Prelude hiding ((<*>), Word)
 import           Data.Map (Map, fromList, (!))
 import           System.Console.ANSI
 import           Chapter_11_my_note ((>.>))
+import           Chapter_10_my_note (dropUntil, getUntil)
+
 
 type Picture = [String]
 
@@ -317,7 +319,7 @@ type Line = String
 type Word = String
 
 makeIndex :: Doc -> [([Int], Word)]
-makeIndex    = shorten . amalgamate . makeLists . sortLs . allNumWords . numLines . line
+makeIndex    = shorten . amalgamate . makeLists . sortLs . allNumWords . numLines . _lines
 
 shorten :: [([Int], Word)] -> [([Int], Word)]
 shorten    = undefined
@@ -332,10 +334,29 @@ sortLs :: [(Int, Word)] -> [(Int, Word)]
 sortLs    = undefined
 
 allNumWords :: [(Int, Line)] -> [(Int, Word)]
-allNumWords    = undefined
+allNumWords    = concatMap numWords
+
+whiteSpace :: String
+whiteSpace    = " \b\n\t;:.,\'\"!?()\\`"
+
+isWhiteSpace :: Char -> Bool
+isWhiteSpace    = flip elem whiteSpace
+
+cleanHead :: Line -> Line
+cleanHead    = dropUntil (not . isWhiteSpace)
+
+_splitWds :: Line -> [Word]
+_splitWds []    = []
+_splitWds ln    = (cleanHead . getUntil isWhiteSpace . cleanHead) ln :
+                  (_splitWds . cleanHead . dropUntil isWhiteSpace . cleanHead) ln
+
+numWords :: (Int, Line) -> [(Int, Word)]
+numWords (num, ln)    = zip (replicate ((length . _splitWds) ln) num) (_splitWds ln)
 
 numLines :: [Line] -> [(Int, Line)]
-numLines    = undefined
+numLines lns    = zip [1 .. length lns] lns
 
-line :: Doc -> [Line]
-line    = undefined
+_lines :: Doc -> [Line]
+_lines []       = []
+_lines docum    = getUntil (== '\n') docum :
+                  _lines ((dropUntil (/= '\n') . dropUntil (== '\n')) docum)
