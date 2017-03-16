@@ -325,19 +325,19 @@ shorten :: [([Int], Word)] -> [([Int], Word)]
 shorten    = filter (\(_, y) -> length y > 3)
 
 amalgamate :: [([Int], Word)] -> [([Int], Word)]
-amalgamate []    = []
+amalgamate []       = []
 amalgamate [val]    = [val]
 amalgamate ((n1, w1) : (n2, w2) : rest)
-    | w1 == w2    = amalgamate ((n1 ++ n2, w1) : rest)
-    | otherwise    = (n1, w1) : amalgamate ((n2, w2) : rest)
+    | w1 == w2      = amalgamate ((n1 ++ n2, w1) : rest)
+    | otherwise     = (n1, w1) : amalgamate ((n2, w2) : rest)
 
 makeLists :: [(Int, Word)] -> [([Int], Word)]
 makeLists    = map (\(x, y) -> ([x], y))
 
 sortLs :: [(Int, Word)] -> [(Int, Word)]
-sortLs []    = []
+sortLs []          = []
 sortLs (p : ps)    = sortLs [q | q <- ps, orderPair q p] ++ [p]
-                     ++ sortLs [q | q <- ps, orderPair p q]
+                     ++ sortLs [q | q <- ps, not (orderPair q p)]
 
 orderPair :: (Int, Word) -> (Int, Word) -> Bool
 orderPair (n1, w1) (n2, w2)    = w1 `smallerThan` w2 || (w1 == w2 && n1 < n2)
