@@ -322,10 +322,14 @@ makeIndex :: Doc -> [([Int], Word)]
 makeIndex    = shorten . amalgamate . makeLists . sortLs . allNumWords . numLines . _lines
 
 shorten :: [([Int], Word)] -> [([Int], Word)]
-shorten    = undefined
+shorten    = filter (\(_, y) -> length y > 3)
 
 amalgamate :: [([Int], Word)] -> [([Int], Word)]
-amalgamate    = undefined
+amalgamate []    = []
+amalgamate [val]    = [val]
+amalgamate ((n1, w1) : (n2, w2) : rest)
+    | w1 == w2    = amalgamate ((n1 ++ n2, w1) : rest)
+    | otherwise    = (n1, w1) : amalgamate ((n2, w2) : rest)
 
 makeLists :: [(Int, Word)] -> [([Int], Word)]
 makeLists    = map (\(x, y) -> ([x], y))
