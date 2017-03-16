@@ -47,9 +47,9 @@ _bsuperImpose :: Bicture -> Bicture -> Bicture
 _bsuperImpose    = zipWith (zipWith (\b1 b2 -> (b1 == b2) && b2))
 
 _bprintPicture :: Bicture -> IO ()
-_bprintPicture    = putStr . concat . map ((++ "\n") . map (\b -> if b
-                                                                  then '#'
-                                                                  else '.'))
+_bprintPicture    = putStr . concat . map ((++ "\n") . map (\_b -> if _b
+                                                                   then '#'
+                                                                   else '.'))
 
 createPic :: Int -> Int -> Picture
 createPic h w    = replicate h ((concat . replicate w) ".")
