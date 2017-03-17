@@ -1,8 +1,10 @@
+{-# OPTIONS_GHC -XFlexibleContexts #-}
+
 module Chapter_13_my_note where
 
 import           Chapter_5_my_note ( Shape ( Circle
                                            , Rectangle
-                                           , Triangle)
+                                           , Triangle )
                                    , isRound
                                    , area
                                    , circulation )
@@ -23,21 +25,21 @@ class Info a where
     example :: [a]
     example         = []
     size :: a -> Int
-    size _          = 0
+    size _          = 1
     provideExp :: a -> [a]
     provideExp _    = example
 
 instance Info Bool where
     example    = [True, False]
-    size _     = 1
 
 instance Info Char where
     example    = ['a' .. 'z'] ++ ['A' .. 'Z'] ++ ['0' .. '9']
-    size _     = 1
 
 instance Info Int where
     example    = [-100 .. 100]
-    size _     = 1
+
+instance Info Float where
+    example    = [1.1, 2.2]
 
 instance Info Shape where
     example    = [Circle 3.0, Rectangle 45.9 87.6]
@@ -46,3 +48,34 @@ instance Info Shape where
 instance Info a => Info [a] where
     example    = [[]] ++ [[x] | x <- example] ++ [[x, y] | x <- example, y <- example]
     size       = foldr ((+) . size) 0
+
+instance (Info a, Info b) => Info (a, b) where
+    example          = [(a, b) | a <- example, b <- example]
+    size (va, vb)    = size va + size vb
+
+class Equ a where
+    (===), (/==) :: a -> a -> Bool
+    x /== y    = not (x === y)
+    x === y    = not (x /== y)
+
+instance Equ Integer where
+    x === y    = x == y
+--    x /== y    = x == y
+--    I know how it is defined here.
+--    define one side and accomplish two sides
+
+class (Ord a, Show a) => OrdShow a
+
+instance OrdShow Char
+instance OrdShow Integer
+instance OrdShow Float
+instance OrdShow Int
+
+insert :: Ord a => [a] -> a -> [a]
+insert ls targ    = [x | x <- ls, x < targ] ++ [targ] ++ [x | x <- ls, x >= targ]
+
+iSort :: Ord a => [a] -> [a]
+iSort    = foldr (flip insert) []
+
+vSort :: OrdShow a => [a] -> String
+vSort ls    = show (iSort ls)
