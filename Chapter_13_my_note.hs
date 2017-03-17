@@ -78,4 +78,4 @@ iSort :: Ord a => [a] -> [a]
 iSort    = foldr (flip insert) []
 
 vSort :: OrdShow a => [a] -> String
-vSort ls    = show (iSort ls)
+vSort    = show . iSort
