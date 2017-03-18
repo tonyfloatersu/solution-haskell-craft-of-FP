@@ -175,3 +175,12 @@ instance Info (Int -> Int) where
 
 infoCompare :: (Info a, Info b) => a -> b -> Bool
 infoCompare _a _b    = size _a <= size _b
+
+class Order a where
+    (-<) :: a -> a -> Bool
+    (>-) :: a -> a -> Bool
+    (-<=) :: a -> a -> Bool
+    (=>-) :: a -> a -> Bool
+    _max :: a -> a -> a
+    _min :: a -> a -> a
+    _compare :: a -> a -> Ordering
