@@ -137,10 +137,30 @@ instance Show Card where
 
 data Trip = MakeTrip { a :: Int
                      , b :: Int
-                     , c :: Int}
+                     , c :: Int }
             deriving Eq
 
 instance Show Trip where
     show (MakeTrip _a _b _c)    = "(" ++ show _a ++ ", "
                                       ++ show _b ++ ", "
                                       ++ show _c ++ ")"
+
+class (Show a) => Visible a where
+    visualize :: a -> String
+    visualize    = show
+
+instance Visible Int
+instance Visible Float
+instance Visible Bool
+
+instance Visible Char where
+    visualize v    = [v]
+
+instance (Visible a) => Visible [a] where
+    visualize []          = ""
+    visualize (x : xs)    = visualize x ++ concatMap ((" " ++) . visualize) xs
+
+instance (Info a, Info b, Info c, Visible a, Visible b, Visible c) => Visible (a, b, c) where
+    visualize (_a, _b, _c)    = "(" ++ visualize _a
+                                    ++ ", " ++ visualize _b
+                                    ++ ", " ++ visualize _c ++ ")"
