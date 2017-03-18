@@ -10,10 +10,8 @@ import           Chapter_5_my_note ( Shape ( Circle
                                    , area
                                    , circulation )
 
-import           Data.Char
-
 listMatch :: Eq a => [a] -> a -> Bool
-listMatch ls val    = (and . map (== val)) ls
+listMatch ls val    = all (== val) ls
 
 numEqual :: Eq a => [a] -> a -> Int
 numEqual xs x    = length (filter (== x) xs)
