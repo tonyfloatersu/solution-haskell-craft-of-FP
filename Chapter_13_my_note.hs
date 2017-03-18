@@ -176,11 +176,17 @@ instance Info (Int -> Int) where
 infoCompare :: (Info a, Info b) => a -> b -> Bool
 infoCompare _a _b    = size _a <= size _b
 
-class Order a where
-    (-<) :: a -> a -> Bool
-    (>-) :: a -> a -> Bool
-    (-<=) :: a -> a -> Bool
-    (=>-) :: a -> a -> Bool
-    _max :: a -> a -> a
-    _min :: a -> a -> a
+class Eq a => Order a where
+    (-<), (>-), (-<=), (=>-) :: a -> a -> Bool
+    _max, _min :: a -> a -> a
     _compare :: a -> a -> Ordering
+    a1 -< a2           = a2 >- a1
+    a1 >- a2           = a2 -< a1
+    a1 -<= a2          = a2 =>- a1
+    a1 =>- a2          = a2 -<= a1
+    _max a1 a2         = if a1 >- a2 then a1 else a2
+    _min a1 a2         = if a1 >- a2 then a2 else a1
+    _compare a1 a2
+        | a1 >- a2     = GT
+        | a1 == a2     = EQ
+        | otherwise    = LT
