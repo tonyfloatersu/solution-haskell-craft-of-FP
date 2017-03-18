@@ -42,10 +42,11 @@ instance Info Int where
     example    = [-100 .. 100]
 
 instance Info Float where
-    example    = [1.1, 2.2]
+    example    = [3.0, 45.9, 87.6]
 
 instance Info Shape where
-    example    = [Circle 3.0, Rectangle 45.9 87.6]
+    example    = [ Circle (head (example :: [Float]))
+                 , Rectangle ((example :: [Float]) !! 1) ((example :: [Float]) !! 2) ]
     size       = round . area
 
 instance Info a => Info [a] where
