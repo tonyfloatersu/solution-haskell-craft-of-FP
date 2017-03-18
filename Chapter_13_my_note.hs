@@ -1,4 +1,5 @@
 {-# OPTIONS_GHC -XFlexibleContexts #-}
+{-# OPTIONS_GHC -XFlexibleInstances #-}
 
 module Chapter_13_my_note where
 
@@ -164,3 +165,11 @@ instance (Info a, Info b, Info c, Visible a, Visible b, Visible c) => Visible (a
     visualize (_a, _b, _c)    = "(" ++ visualize _a
                                     ++ ", " ++ visualize _b
                                     ++ ", " ++ visualize _c ++ ")"
+
+instance Info (Int -> Bool) where
+    example    = [(== 1)]
+    size _     = 1
+
+instance Info (Int -> Int) where
+    example    = [id]
+    size _     = 1
