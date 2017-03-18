@@ -54,7 +54,7 @@ instance Info a => Info [a] where
     size       = foldr ((+) . size) 0
 
 instance (Info a, Info b) => Info (a, b) where
-    example          = [(a, b) | a <- example, b <- example]
+    example          = [(_a, _b) | _a <- example, _b <- example]
     size (va, vb)    = size va + size vb
 
 class Equ a where
