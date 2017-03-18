@@ -172,3 +172,6 @@ instance Info (Int -> Bool) where
 instance Info (Int -> Int) where
     example    = [id]
     size _     = 1
+
+infoCompare :: (Info a, Info b) => a -> b -> Bool
+infoCompare _a _b    = size _a <= size _b
