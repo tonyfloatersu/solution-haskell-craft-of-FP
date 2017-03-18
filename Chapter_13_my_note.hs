@@ -9,6 +9,8 @@ import           Chapter_5_my_note ( Shape ( Circle
                                    , area
                                    , circulation )
 
+import           Data.Char
+
 listMatch :: Eq a => [a] -> a -> Bool
 listMatch ls val    = (and . map (== val)) ls
 
@@ -79,3 +81,66 @@ iSort    = foldr (flip insert) []
 
 vSort :: OrdShow a => [a] -> String
 vSort    = show . iSort
+
+class Checkable b where
+    infoCheck :: (Info a) => (a -> b) -> Bool
+
+instance Checkable Bool where
+    infoCheck property    = all property example
+
+instance (Info a, Checkable b) => Checkable (a -> b) where
+    infoCheck property    = all (infoCheck . property) example
+
+data Move = Paper | Stone | Scissors
+            deriving Eq
+
+instance Show Move where
+    show Paper       = "paper"
+    show Stone       = "stone"
+    show Scissors    = "scissors"
+
+data Suit = Spade | Heart | Diamond | Club
+            deriving Eq
+
+instance Show Suit where
+    show Spade      = "spade"
+    show Heart      = "heart"
+    show Diamond    = "diamond"
+    show Club       = "club"
+
+data Value = One | Two | Three | Four | Five | Six |
+             Seven | Eight | Nine | Ten | Jack | Queen |
+             King | Ace
+             deriving (Eq, Ord)
+
+instance Show Value where
+    show One      = "one"
+    show Two      = "two"
+    show Three    = "three"
+    show Four     = "four"
+    show Five     = "five"
+    show Six      = "six"
+    show Seven    = "seven"
+    show Eight    = "eight"
+    show Nine     = "nine"
+    show Ten      = "ten"
+    show Jack     = "jack"
+    show Queen    = "queen"
+    show King     = "king"
+    show Ace      = "ace"
+
+data Card = CardConstruct Suit Value
+            deriving Eq
+
+instance Show Card where
+    show (CardConstruct suit val)    = show suit ++ " " ++ show val
+
+data Trip = MakeTrip { a :: Int
+                     , b :: Int
+                     , c :: Int}
+            deriving Eq
+
+instance Show Trip where
+    show (MakeTrip _a _b _c)    = "(" ++ show _a ++ ", "
+                                      ++ show _b ++ ", "
+                                      ++ show _c ++ ")"
