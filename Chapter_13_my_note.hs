@@ -190,3 +190,19 @@ class Eq a => Order a where
         | a1 >- a2     = GT
         | a1 == a2     = EQ
         | otherwise    = LT
+
+instance (Order a, Order b) => Order (a, b) where
+    (a1, b1) -< (a2, b2)
+        | a1 -< a2                = True
+        | a1 == a2 && b1 -< b2    = True
+        | otherwise               = False
+    _max (a1, b1) (a2, b2)
+        | (a1, b1) -< (a2, b2)    = (a1, b1)
+        | otherwise               = (a2, b2)
+    _min (a1, b1) (a2, b2)
+        | (a1, b1) >- (a2, b2)    = (a1, b1)
+        | otherwise               = (a2, b2)
+
+instance Order Char where (-<) = (<)
+instance Order Int where (-<) = (<)
+instance Order Float where (-<) = (<)
