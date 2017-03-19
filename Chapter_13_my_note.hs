@@ -220,3 +220,43 @@ instance Order a => Order [a] where
 instance Order Char where (-<) = (<)
 instance Order Int where (-<) = (<)
 instance Order Float where (-<) = (<)
+instance Order Bool where (-<) = (<)
+
+class Ord a => Enumerate a where
+    esucc, epred        :: a -> a
+    toEnumerate         :: Int -> a
+    fromEnumerate       :: a -> Int
+    enumerateFrom       :: a -> [a]
+    enumerateFromThen   :: a -> a -> [a]
+    enumerateFromTo     :: a -> a -> [a]
+    enumerateFromThenTo :: a -> a -> a -> [a]
+
+instance Enumerate Int where
+    esucc                              = succ
+    epred                              = pred
+    fromEnumerate                      = fromEnum
+    toEnumerate                        = toEnumerate
+    enumerateFrom val                  = [val ..]
+    enumerateFromThen val nxt          = [val, nxt ..]
+    enumerateFromTo val fin            = [val .. fin]
+    enumerateFromThenTo val nxt fin    = [val, nxt .. fin]
+
+instance Enumerate Integer where
+    esucc                              = succ
+    epred                              = pred
+    fromEnumerate                      = fromEnum
+    toEnumerate                        = toEnumerate
+    enumerateFrom val                  = [val ..]
+    enumerateFromThen val nxt          = [val, nxt ..]
+    enumerateFromTo val fin            = [val .. fin]
+    enumerateFromThenTo val nxt fin    = [val, nxt .. fin]
+
+instance Enumerate Char where
+    esucc                              = succ
+    epred                              = pred
+    fromEnumerate                      = fromEnum
+    toEnumerate                        = toEnumerate
+    enumerateFrom val                  = [val ..]
+    enumerateFromThen val nxt          = [val, nxt ..]
+    enumerateFromTo val fin            = [val .. fin]
+    enumerateFromThenTo val nxt fin    = [val, nxt .. fin]
