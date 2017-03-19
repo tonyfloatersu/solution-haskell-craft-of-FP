@@ -260,3 +260,16 @@ instance Enumerate Char where
     enumerateFromThen val nxt          = [val, nxt ..]
     enumerateFromTo val fin            = [val .. fin]
     enumerateFromThenTo val nxt fin    = [val, nxt .. fin]
+
+data Boolean = True_ | False_
+                deriving (Eq, Show, Read)
+
+showBoolFun :: (Bool -> Bool) -> String
+showBoolFun func    = "Truth table\n------+------\n"
+                      ++ show True ++ "  |" ++ (show . func) True ++ "\n"
+                      ++ show False ++ " |" ++ (show . func) False ++ "\n"
+
+showBoolFunGen :: (a -> String) -> (Bool -> a) -> String
+showBoolFunGen expr func    = "Truth table\n------+------\n"
+                      ++ show True ++ "  |" ++ (expr . func) True ++ "\n"
+                      ++ show False ++ " |" ++ (expr . func) False ++ "\n"
