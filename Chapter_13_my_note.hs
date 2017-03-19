@@ -264,6 +264,9 @@ instance Enumerate Char where
 data Boolean = True_ | False_
                 deriving (Eq, Show, Read)
 
+instance Show (Bool -> Bool) where
+    show    = showBoolFun
+
 showBoolFun :: (Bool -> Bool) -> String
 showBoolFun func    = "Truth table\n------+------\n"
                       ++ show True ++ "  |" ++ (show . func) True ++ "\n"
@@ -273,3 +276,4 @@ showBoolFunGen :: (a -> String) -> (Bool -> a) -> String
 showBoolFunGen expr func    = "Truth table\n------+------\n"
                       ++ show True ++ "  |" ++ (expr . func) True ++ "\n"
                       ++ show False ++ " |" ++ (expr . func) False ++ "\n"
+
