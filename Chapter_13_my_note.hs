@@ -284,3 +284,11 @@ showBoolFunGen expr func    = "Truth table\n------+------\n"
 
 instance (Info a, Show a, Show b) => Show (a -> b) where
     show func    = concatMap (\x -> show x ++ " " ++ ((++ "\n") . show . func) x) example
+
+class StrangeOrder a  where
+    (<~) :: a -> a -> Bool
+    (~>) :: a -> a -> Bool
+    (<~) _ _ = False
+    (~>) _ _ = False
+
+instance StrangeOrder Move where
