@@ -263,6 +263,7 @@ instance Enumerate Char where
 
 data Boolean = True_ | False_
                 deriving (Eq, Show, Read)
+
 -- https://hackage.haskell.org/package/base-4.9.1.0/docs/Data-Ord.html
 -- fuck you asshole haskell
 -- I used to have the idea about (a1 .. an) ord is automatic
