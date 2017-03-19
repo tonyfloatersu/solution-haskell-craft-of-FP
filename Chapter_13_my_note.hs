@@ -268,8 +268,8 @@ data Boolean = True_ | False_
 -- I used to have the idea about (a1 .. an) ord is automatic
 -- then here I see it is just ... fuck...
 
-instance Show (Bool -> Bool) where
-    show    = showBoolFun
+-- instance Show (Bool -> Bool) where
+--     show    = showBoolFun
 
 showBoolFun :: (Bool -> Bool) -> String
 showBoolFun func    = "Truth table\n------+------\n"
@@ -281,3 +281,5 @@ showBoolFunGen expr func    = "Truth table\n------+------\n"
                       ++ show True ++ "  |" ++ (expr . func) True ++ "\n"
                       ++ show False ++ " |" ++ (expr . func) False ++ "\n"
 
+instance (Info a, Show a, Show b) => Show (a -> b) where
+    show func    = concatMap (\x -> show x ++ " " ++ ((++ "\n") . show . func) x) example
