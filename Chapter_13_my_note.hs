@@ -178,14 +178,14 @@ infoCompare _a _b    = size _a <= size _b
 
 class Eq a => Order a where
     (-<), (>-), (-<=), (=>-) :: a -> a -> Bool
-    _max, _min :: a -> a -> a
-    _compare :: a -> a -> Ordering
     a1 -< a2           = a2 >- a1
     a1 >- a2           = a2 -< a1
     a1 -<= a2          = a2 =>- a1
     a1 =>- a2          = a2 -<= a1
+    _max, _min :: a -> a -> a
     _max a1 a2         = if a1 >- a2 then a1 else a2
     _min a1 a2         = if a1 >- a2 then a2 else a1
+    _compare :: a -> a -> Ordering
     _compare a1 a2
         | a1 >- a2     = GT
         | a1 == a2     = EQ
@@ -202,6 +202,20 @@ instance (Order a, Order b) => Order (a, b) where
     _min (a1, b1) (a2, b2)
         | (a1, b1) >- (a2, b2)    = (a1, b1)
         | otherwise               = (a2, b2)
+
+instance Order a => Order [a] where
+    _  -< []            = False
+    [] -< (_ : _)       = True
+    (_a : lsa) -< (_b : lsb)
+        | _a -< _b      = True
+        | _a == _b      = lsa -< lsb
+        | otherwise     = False
+    _max lsa lsb
+        | lsa -< lsb    = lsb
+        | otherwise     = lsa
+    _min lsa lsb
+        | lsa -< lsb    = lsa
+        | otherwise     = lsb
 
 instance Order Char where (-<) = (<)
 instance Order Int where (-<) = (<)
