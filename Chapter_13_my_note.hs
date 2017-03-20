@@ -290,8 +290,8 @@ instance (Info a, Show a, Show b) => Show (a -> b) where
 class StrangeOrder a  where
     (<~) :: a -> a -> Bool
     (~>) :: a -> a -> Bool
-    (<~) _ _ = False
-    (~>) _ _ = False
+    (<~) _ _    = False
+    (~>) _ _    = False
 
 instance StrangeOrder Move where
 
