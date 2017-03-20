@@ -327,9 +327,9 @@ headsub str1 str2    = if length str2 >= 2
                        else str1 == str2
 
 readroman :: String -> Roman
-readroman str    = if (isSorted . reverse) digarray
-                   then Roman (sum digarray)
-                   else error "wrong type roman value"
+readroman str       = if (isSorted . reverse) digarray
+                      then Roman (sum digarray)
+                      else error "wrong type roman value"
   where digarray    = (splitRoman . filtRoman) str :: [Integer]
 
 convMap :: [(Integer, String)]
