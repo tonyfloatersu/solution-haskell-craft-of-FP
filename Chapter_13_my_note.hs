@@ -302,13 +302,22 @@ instance Num Roman where
 
 instance Show Roman where
     show (Roman val)    = if val < 0 then "(NEGATIVE) " else ""
-                          ++ undefined
+                          ++ romeAddOneDig convMap (abs val) []
 
-romanSymb :: [String]
-romanSymb    = ["M", "D", "C", "L", "X", "V", "I", "O"]
+convMap :: [(Integer, String)]
+convMap = [ (1000, "M"), (900, "CM"), (500, "D"), (400, "CD")
+          , (100, "C"), (90, "XC"), (50, "L"), (40, "XL")
+          , (10, "X"), (9, "IX"), (5, "V"), (4, "IV")
+          , (1, "I"), (0, "O") ]
 
-romanValu :: [Integer]
-romanValu    = [1000, 500, 100, 50, 10, 5, 1, 0]
+mapFindNext :: [(Integer, String)] -> Integer -> (Integer, String)
+mapFindNext [] _             = error "empty list, error"
+mapFindNext (s : ls) curr    = if fst s <= curr then s else mapFindNext ls curr
 
-romanValSymbPair :: [(String, Integer)]
-romanValSymbPair    = zip romanSymb romanValu
+romeAddOneDig :: [(Integer, String)] -> Integer -> String -> String
+romeAddOneDig _ 0 []         = "O"
+romeAddOneDig _ 0 wtf        = wtf
+romeAddOneDig vsp val str    = romeAddOneDig convMap (val - eliminVal) (str ++ addingStr)
+  where addingPair    = mapFindNext vsp val
+        addingStr     = snd addingPair
+        eliminVal     = fst addingPair
