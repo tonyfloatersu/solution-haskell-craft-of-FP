@@ -6,9 +6,11 @@ module Chapter_13_my_note where
 import           Chapter_5_my_note ( Shape ( Circle
                                            , Rectangle
                                            , Triangle )
-                                   , isRound
                                    , area
-                                   , circulation )
+                                   , circulation
+                                   , isRound )
+
+import           Chapter_7_my_note (isSorted)
 
 listMatch :: Eq a => [a] -> a -> Bool
 listMatch ls val    = all (== val) ls
@@ -95,18 +97,18 @@ data Move = Paper | Stone | Scissors
             deriving Eq
 
 instance Show Move where
-    show Paper       = "paper"
-    show Stone       = "stone"
-    show Scissors    = "scissors"
+    show Paper    = "paper"
+    show Stone    = "stone"
+    show Scissors = "scissors"
 
 data Suit = Spade | Heart | Diamond | Club
             deriving Eq
 
 instance Show Suit where
-    show Spade      = "spade"
-    show Heart      = "heart"
-    show Diamond    = "diamond"
-    show Club       = "club"
+    show Spade   = "spade"
+    show Heart   = "heart"
+    show Diamond = "diamond"
+    show Club    = "club"
 
 data Value = One | Two | Three | Four | Five | Six |
              Seven | Eight | Nine | Ten | Jack | Queen |
@@ -114,20 +116,20 @@ data Value = One | Two | Three | Four | Five | Six |
              deriving (Eq, Ord)
 
 instance Show Value where
-    show One      = "one"
-    show Two      = "two"
-    show Three    = "three"
-    show Four     = "four"
-    show Five     = "five"
-    show Six      = "six"
-    show Seven    = "seven"
-    show Eight    = "eight"
-    show Nine     = "nine"
-    show Ten      = "ten"
-    show Jack     = "jack"
-    show Queen    = "queen"
-    show King     = "king"
-    show Ace      = "ace"
+    show One   = "one"
+    show Two   = "two"
+    show Three = "three"
+    show Four  = "four"
+    show Five  = "five"
+    show Six   = "six"
+    show Seven = "seven"
+    show Eight = "eight"
+    show Nine  = "nine"
+    show Ten   = "ten"
+    show Jack  = "jack"
+    show Queen = "queen"
+    show King  = "king"
+    show Ace   = "ace"
 
 data Card = CardConstruct Suit Value
             deriving Eq
@@ -157,8 +159,8 @@ instance Visible Char where
     visualize v    = [v]
 
 instance (Visible a) => Visible [a] where
-    visualize []          = ""
-    visualize (x : xs)    = visualize x ++ concatMap ((" " ++) . visualize) xs
+    visualize []       = ""
+    visualize (x : xs) = visualize x ++ concatMap ((" " ++) . visualize) xs
 
 instance (Info a, Info b, Info c, Visible a, Visible b, Visible c) => Visible (a, b, c) where
     visualize (_a, _b, _c)    = "(" ++ visualize _a
@@ -301,8 +303,34 @@ instance Num Roman where
     (Roman va) * (Roman vb)    = Roman (va * vb)
 
 instance Show Roman where
-    show (Roman val)    = if val < 0 then "(NEGATIVE) " else ""
-                          ++ romeAddOneDig convMap (abs val) []
+    show (Roman val)    = (if val < 0 then "(NEGATIVE) " else "")
+                          ++ valRoman convMap (abs val) []
+
+filtRoman :: String -> String
+filtRoman    = filter (not . (`elem` "MCDXLVIO"))
+
+splitRoman :: String -> [Integer]
+splitRoman []     = []
+splitRoman str    = (fst . matchFir) str :
+                    splitRoman (drop (length ((snd . matchFir) str)) str)
+
+matchRomFir :: String -> [(Integer, String)]
+matchRomFir str    = map (\x -> if headsub (snd x) str then x else (-1, "")) convMap
+
+matchFir :: String -> (Integer, String)
+matchFir str    = (head . filter (\x -> fst x == maxv) . matchRomFir) str
+  where maxv    = (maximum . map fst . matchRomFir) str :: Integer
+
+headsub :: String -> String -> Bool
+headsub str1 str2    = if length str2 >= 2
+                       then and (zipWith (==) str1 str2)
+                       else str1 == str2
+
+readroman :: String -> Roman
+readroman str    = if (isSorted . reverse) digarray
+                   then (Roman (sum digarray))
+                   else error "wrong type roman value"
+  where digarray    = (splitRoman . filtRoman) str :: [Integer]
 
 convMap :: [(Integer, String)]
 convMap = [ (1000, "M"), (900, "CM"), (500, "D"), (400, "CD")
@@ -311,13 +339,13 @@ convMap = [ (1000, "M"), (900, "CM"), (500, "D"), (400, "CD")
           , (1, "I"), (0, "O") ]
 
 mapFindNext :: [(Integer, String)] -> Integer -> (Integer, String)
-mapFindNext [] _             = error "empty list, error"
-mapFindNext (s : ls) curr    = if fst s <= curr then s else mapFindNext ls curr
+mapFindNext [] _          = error "empty list, error"
+mapFindNext (s : ls) curr = if fst s <= curr then s else mapFindNext ls curr
 
-romeAddOneDig :: [(Integer, String)] -> Integer -> String -> String
-romeAddOneDig _ 0 []         = "O"
-romeAddOneDig _ 0 wtf        = wtf
-romeAddOneDig vsp val str    = romeAddOneDig convMap (val - eliminVal) (str ++ addingStr)
-  where addingPair    = mapFindNext vsp val
-        addingStr     = snd addingPair
-        eliminVal     = fst addingPair
+valRoman :: [(Integer, String)] -> Integer -> String -> String
+valRoman _ 0 []         = "O"
+valRoman _ 0 wtf        = wtf
+valRoman vsp val str    = valRoman convMap (val - eliminVal) (str ++ addingStr)
+  where addingPair      = mapFindNext vsp val
+        addingStr       = snd addingPair
+        eliminVal       = fst addingPair
