@@ -307,7 +307,7 @@ instance Show Roman where
                           ++ valRoman convMap (abs val) []
 
 filtRoman :: String -> String
-filtRoman    = filter (not . (`elem` "MCDXLVIO"))
+filtRoman    = filter (`elem` "MCDXLVIO")
 
 splitRoman :: String -> [Integer]
 splitRoman []     = []
@@ -328,7 +328,7 @@ headsub str1 str2    = if length str2 >= 2
 
 readroman :: String -> Roman
 readroman str    = if (isSorted . reverse) digarray
-                   then (Roman (sum digarray))
+                   then Roman (sum digarray)
                    else error "wrong type roman value"
   where digarray    = (splitRoman . filtRoman) str :: [Integer]
 
