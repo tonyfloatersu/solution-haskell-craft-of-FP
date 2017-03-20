@@ -303,3 +303,12 @@ instance Num Roman where
 instance Show Roman where
     show (Roman val)    = if val < 0 then "(NEGATIVE) " else ""
                           ++ undefined
+
+romanSymb :: [String]
+romanSymb    = ["M", "D", "C", "L", "X", "V", "I", "O"]
+
+romanValu :: [Integer]
+romanValu    = [1000, 500, 100, 50, 10, 5, 1, 0]
+
+romanValSymbPair :: [(String, Integer)]
+romanValSymbPair    = zip romanSymb romanValu
