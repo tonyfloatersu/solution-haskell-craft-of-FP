@@ -292,3 +292,14 @@ class StrangeOrder a  where
     (~>) _ _ = False
 
 instance StrangeOrder Move where
+
+data Roman = Roman Integer
+
+instance Num Roman where
+    (Roman va) + (Roman vb)    = Roman (va + vb)
+    (Roman va) - (Roman vb)    = Roman (va - vb)
+    (Roman va) * (Roman vb)    = Roman (va * vb)
+
+instance Show Roman where
+    show (Roman val)    = if val < 0 then "(NEGATIVE) " else ""
+                          ++ undefined
