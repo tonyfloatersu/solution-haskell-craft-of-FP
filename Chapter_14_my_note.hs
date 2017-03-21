@@ -41,9 +41,6 @@ occurs (Node val t1 t2) p    = (if val == p then 1 else 0) + occurs t1 p + occur
 assoc :: Expr -> Expr
 assoc (Add (Add e1 e2) e3)    = assoc (Add e1 (Add e2 e3))
 assoc (Add e1 e2)             = Add (assoc e1) (assoc e2)
-assoc (Sub e1 e2)             = Sub (assoc e1) (assoc e2)
-assoc (Prd e1 e2)             = Prd (assoc e1) (assoc e2)
-assoc (Div e1 e2)             = Div (assoc e1) (assoc e2)
 assoc (Lit fa)                = Lit fa
 
 sizeepr :: Expr -> Integer
@@ -78,12 +75,33 @@ instance Show Express where
 assocr :: Express -> Express
 assocr ((e1 :+: e2) :+: e3)    = assocr (e1 :+: (e2 :+: e3))
 assocr (e1 :+: e2)             = assocr e1 :+: assocr e2
-assocr (e1 :-: e2)             = assocr e1 :-: assocr e2
-assocr (e1 :*: e2)             = assocr e1 :*: assocr e2
-assocr (e1 :/: e2)             = assocr e1 :/: assocr e2
 assocr (Liter val)             = Liter val
 
 data Expression = Literal Integer
                 | Op Ops Expression Expression
-data Ops = Addi | Subs | Mult | Divi
+data Ops = Addi | Subs | Mult | Divi | Modu
 
+evaluate :: Expression -> Integer
+evaluate (Literal valu)         = valu
+evaluate (Op Addi exp1 exp2)    = evaluate exp1 + evaluate exp2
+evaluate (Op Subs exp1 exp2)    = evaluate exp1 - evaluate exp2
+evaluate (Op Mult exp1 exp2)    = evaluate exp1 * evaluate exp2
+evaluate (Op Divi exp1 exp2)    = if evaluate exp2 == 0
+                                  then error "wrong division, snd val is 0"
+                                  else div (evaluate exp1) (evaluate exp2)
+evaluate (Op Modu exp1 exp2)    = if evaluate exp2 == 0
+                                  then error "wrong mod, snd val is 0"
+                                  else mod (evaluate exp1) (evaluate exp2)
+
+instance Show Expression where
+    show (Literal val)          = show val
+    show (Op Addi exp1 exp2)    = "(" ++ show exp1 ++ " + " ++ show exp2 ++ ")"
+    show (Op Subs exp1 exp2)    = "(" ++ show exp1 ++ " - " ++ show exp2 ++ ")"
+    show (Op Mult exp1 exp2)    = "(" ++ show exp1 ++ " * " ++ show exp2 ++ ")"
+    show (Op Divi exp1 exp2)    = "(" ++ show exp1 ++ " / " ++ show exp2 ++ ")"
+    show (Op Modu exp1 exp2)    = "(" ++ show exp1 ++ " mod " ++ show exp2 ++ ")"
+
+associater :: Expression -> Expression
+associater (Op m1 (Op m2 e1 e2) e3)    = associater (Op m1 e1 (Op m2 e2 e3))
+associater (Op Addi e1 e2)             = Op Addi (associater e1) (associater e2)
+associater (Literal valu)              = Literal valu
