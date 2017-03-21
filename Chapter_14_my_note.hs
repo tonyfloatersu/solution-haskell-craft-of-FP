@@ -138,3 +138,18 @@ collapse (Node val lft rht)    = intList lft ++ [val] ++ intList rht
 sort :: Ntree -> [Integer]
 sort    = qSort . collapse
 
+data Bio = Parent String [Person]
+         | NonParent String
+
+data Person = Adult { name :: String
+                    , address :: String
+                    , bio :: Bio }
+            | Child { name :: String }
+
+showBio :: Bio -> String
+showBio (Parent names humans)    = names ++ concatMap showPerson humans
+showBio (NonParent names)          = names
+
+showPerson :: Person -> String
+showPerson (Adult _name _address _bio)    = _name ++ _address ++ showBio _bio
+showPerson (Child _name)                  = _name
