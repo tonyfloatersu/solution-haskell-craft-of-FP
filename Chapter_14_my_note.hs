@@ -9,16 +9,24 @@ data Ntree = NilT
 data Expr = Lit Integer
           | Add Expr Expr
           | Sub Expr Expr
+          | Prd Expr Expr
+          | Div Expr Expr
 
 eval :: Expr -> Integer
 eval (Lit val)          = val
 eval (Add val1 val2)    = eval val1 + eval val2
 eval (Sub val1 val2)    = eval val1 - eval val2
+eval (Prd val1 val2)    = eval val1 * eval val2
+eval (Div val1 val2)    = if eval val2 == 0
+                          then error "divide 0?"
+                          else div (eval val1) (eval val2)
 
 instance Show Expr where
     show (Lit n)        = show n
     show (Add n1 n2)    = "(" ++ show n1 ++ " + " ++ show n2 ++ ")"
     show (Sub n1 n2)    = "(" ++ show n1 ++ " - " ++ show n2 ++ ")"
+    show (Prd n1 n2)    = "(" ++ show n1 ++ " * " ++ show n2 ++ ")"
+    show (Div n1 n2)    = "(" ++ show n1 ++ " / " ++ show n2 ++ ")"
 
 sumTree, depth :: Ntree -> Integer
 sumTree NilT                      = 0
@@ -34,12 +42,16 @@ assoc :: Expr -> Expr
 assoc (Add (Add e1 e2) e3)    = assoc (Add e1 (Add e2 e3))
 assoc (Add e1 e2)             = Add (assoc e1) (assoc e2)
 assoc (Sub e1 e2)             = Sub (assoc e1) (assoc e2)
+assoc (Prd e1 e2)             = Prd (assoc e1) (assoc e2)
+assoc (Div e1 e2)             = Div (assoc e1) (assoc e2)
 assoc (Lit fa)                = Lit fa
 
 sizeepr :: Expr -> Integer
 sizeepr (Lit _)            = 0
 sizeepr (Sub exp1 exp2)    = 1 + sizeepr exp1 + sizeepr exp2
 sizeepr (Add exp1 exp2)    = 1 + sizeepr exp1 + sizeepr exp2
+sizeepr (Prd exp1 exp2)    = 1 + sizeepr exp1 + sizeepr exp2
+sizeepr (Div exp1 exp2)    = 1 + sizeepr exp1 + sizeepr exp2
 
 data Express = Literal Integer
              | Express :+: Express
@@ -60,4 +72,3 @@ assocr ((e1 :+: e2) :+: e3)    = assocr (e1 :+: (e2 :+: e3))
 assocr (e1 :+: e2)             = assocr e1 :+: assocr e2
 assocr (e1 :-: e2)             = assocr e1 :-: assocr e2
 assocr (Literal val)           = Literal val
-
