@@ -124,3 +124,7 @@ inTree tree val    = val `elem` intList tree
 
 treeMaxMin :: Ntree -> (Integer, Integer)
 treeMaxMin tree    = ((maximum . intList) tree, (minimum . intList) tree)
+
+reflect :: Ntree -> Ntree
+reflect NilT                  = NilT
+reflect (Node val lft rht)    = Node val (reflect rht) (reflect lft)
