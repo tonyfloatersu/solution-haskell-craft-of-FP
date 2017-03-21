@@ -3,6 +3,8 @@
 
 module Chapter_14_my_note where
 
+import           Chapter_7_my_note (qSort)
+
 data Ntree = NilT
            | Node Integer Ntree Ntree
 
@@ -128,3 +130,10 @@ treeMaxMin tree    = ((maximum . intList) tree, (minimum . intList) tree)
 reflect :: Ntree -> Ntree
 reflect NilT                  = NilT
 reflect (Node val lft rht)    = Node val (reflect rht) (reflect lft)
+
+collapse :: Ntree -> [Integer]
+collapse NilT                  = []
+collapse (Node val lft rht)    = intList lft ++ [val] ++ intList rht
+
+sort :: Ntree -> [Integer]
+sort    = qSort . collapse
