@@ -56,21 +56,34 @@ sizeepr (Div exp1 exp2)    = 1 + sizeepr exp1 + sizeepr exp2
 data Express = Liter Integer
              | Express :+: Express
              | Express :-: Express
+             | Express :*: Express
+             | Express :/: Express
 
 evaluation :: Express -> Integer
 evaluation (Liter valu)       = valu
 evaluation (exp1 :+: exp2)    = evaluation exp1 + evaluation exp2
 evaluation (exp1 :-: exp2)    = evaluation exp1 - evaluation exp2
+evaluation (exp1 :*: exp2)    = evaluation exp1 * evaluation exp2
+evaluation (exp1 :/: exp2)    = if evaluation exp2 == 0
+                                then error "wrong division, snd val is 0"
+                                else div (evaluation exp1) (evaluation exp2)
 
 instance Show Express where
     show (Liter val)        = show val
     show (exp1 :+: exp2)    = "(" ++ show exp1 ++ " + " ++ show exp2 ++ ")"
     show (exp1 :-: exp2)    = "(" ++ show exp1 ++ " - " ++ show exp2 ++ ")"
+    show (exp1 :*: exp2)    = "(" ++ show exp1 ++ " * " ++ show exp2 ++ ")"
+    show (exp1 :/: exp2)    = "(" ++ show exp1 ++ " / " ++ show exp2 ++ ")"
 
 assocr :: Express -> Express
 assocr ((e1 :+: e2) :+: e3)    = assocr (e1 :+: (e2 :+: e3))
 assocr (e1 :+: e2)             = assocr e1 :+: assocr e2
 assocr (e1 :-: e2)             = assocr e1 :-: assocr e2
+assocr (e1 :*: e2)             = assocr e1 :*: assocr e2
+assocr (e1 :/: e2)             = assocr e1 :/: assocr e2
 assocr (Liter val)             = Liter val
 
--- data Expression = 
+data Expression = Literal Integer
+                | Op Ops Expression Expression
+data Ops = Addi | Subs | Mult | Divi
+
