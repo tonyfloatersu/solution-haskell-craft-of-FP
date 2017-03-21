@@ -110,4 +110,7 @@ associater (Op Addi (Op Addi e1 e2) e3)    = associater (Op Addi e1 (Op Addi e2 
 associater (Op Addi e1 e2)                 = Op Addi (associater e1) (associater e2)
 associater (Literal valu)                  = Literal valu
 
--- what?
+lrtrees :: Ntree -> (Ntree, Ntree)
+lrtrees NilT                = error "empty list now"
+-- or we can return (NilT, NilT)
+lrtrees (Node _ lft rht)    = (lft, rht)
