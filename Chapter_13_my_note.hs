@@ -349,3 +349,18 @@ valRoman vsp val str    = valRoman convMap (val - eliminVal) (str ++ addingStr)
   where addingPair      = mapFindNext vsp val
         addingStr       = snd addingPair
         eliminVal       = fst addingPair
+
+_multComp :: Ord a => a -> a -> Ordering
+_multComp vala valb
+    | vala == valb    = EQ
+    | vala > valb     = GT
+    | otherwise       = LT
+
+_multMerge :: Ord a => [a] -> [a] -> [a]
+_multMerge [] (y : ys)    = y : ys
+_multMerge (x : xs) []    = x : xs
+_multMerge [] []          = []
+_multMerge (x : xs) (y : ys)
+    | x < y               = x : _multMerge xs (y : ys)
+    | x == y              = x : y : _multMerge xs ys
+    | otherwise           = y : _multMerge (x : xs) ys
