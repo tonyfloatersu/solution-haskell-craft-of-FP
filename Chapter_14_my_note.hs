@@ -53,22 +53,24 @@ sizeepr (Add exp1 exp2)    = 1 + sizeepr exp1 + sizeepr exp2
 sizeepr (Prd exp1 exp2)    = 1 + sizeepr exp1 + sizeepr exp2
 sizeepr (Div exp1 exp2)    = 1 + sizeepr exp1 + sizeepr exp2
 
-data Express = Literal Integer
+data Express = Liter Integer
              | Express :+: Express
              | Express :-: Express
 
 evaluation :: Express -> Integer
-evaluation (Literal valu)     = valu
+evaluation (Liter valu)       = valu
 evaluation (exp1 :+: exp2)    = evaluation exp1 + evaluation exp2
 evaluation (exp1 :-: exp2)    = evaluation exp1 - evaluation exp2
 
 instance Show Express where
-    show (Literal val)        = show val
-    show (exp1 :+: exp2)      = "(" ++ show exp1 ++ " + " ++ show exp2 ++ ")"
-    show (exp1 :-: exp2)      = "(" ++ show exp1 ++ " - " ++ show exp2 ++ ")"
+    show (Liter val)        = show val
+    show (exp1 :+: exp2)    = "(" ++ show exp1 ++ " + " ++ show exp2 ++ ")"
+    show (exp1 :-: exp2)    = "(" ++ show exp1 ++ " - " ++ show exp2 ++ ")"
 
 assocr :: Express -> Express
 assocr ((e1 :+: e2) :+: e3)    = assocr (e1 :+: (e2 :+: e3))
 assocr (e1 :+: e2)             = assocr e1 :+: assocr e2
 assocr (e1 :-: e2)             = assocr e1 :-: assocr e2
-assocr (Literal val)           = Literal val
+assocr (Liter val)             = Liter val
+
+-- data Expression = 
