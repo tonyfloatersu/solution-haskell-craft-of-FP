@@ -137,3 +137,4 @@ collapse (Node val lft rht)    = intList lft ++ [val] ++ intList rht
 
 sort :: Ntree -> [Integer]
 sort    = qSort . collapse
+
