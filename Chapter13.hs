@@ -67,7 +67,7 @@ suc = (+1)
 
 lookupFirst :: Eq a => [ (a,b) ] -> a -> [b]
 
-lookupFirst ws x 
+lookupFirst ws x
   = [ z | (y,z) <- ws , y==x ]
 
 -- borrowed    :: Eq b => [ (a,b) ] -> b -> Bool
