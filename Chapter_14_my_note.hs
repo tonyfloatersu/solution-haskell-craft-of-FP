@@ -109,3 +109,5 @@ associater :: Expression -> Expression
 associater (Op Addi (Op Addi e1 e2) e3)    = associater (Op Addi e1 (Op Addi e2 e3))
 associater (Op Addi e1 e2)                 = Op Addi (associater e1) (associater e2)
 associater (Literal valu)                  = Literal valu
+
+-- what?
