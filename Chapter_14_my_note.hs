@@ -114,3 +114,13 @@ lrtrees :: Ntree -> (Ntree, Ntree)
 lrtrees NilT                = error "empty list now"
 -- or we can return (NilT, NilT)
 lrtrees (Node _ lft rht)    = (lft, rht)
+
+intList :: Ntree -> [Integer]
+intList NilT                  = []
+intList (Node val lft rht)    = [val] ++ intList lft ++ intList rht
+
+inTree :: Ntree -> Integer -> Bool
+inTree tree val    = val `elem` intList tree
+
+treeMaxMin :: Ntree -> (Integer, Integer)
+treeMaxMin tree    = ((maximum . intList) tree, (minimum . intList) tree)
