@@ -101,7 +101,11 @@ instance Show Expression where
     show (Op Divi exp1 exp2)    = "(" ++ show exp1 ++ " / " ++ show exp2 ++ ")"
     show (Op Modu exp1 exp2)    = "(" ++ show exp1 ++ " mod " ++ show exp2 ++ ")"
 
+sizeexpr :: Expression -> Integer
+sizeexpr (Literal _)     = 0
+sizeexpr (Op _ e1 e2)    = 1 + sizeexpr e1 + sizeexpr e2
+
 associater :: Expression -> Expression
-associater (Op m1 (Op m2 e1 e2) e3)    = associater (Op m1 e1 (Op m2 e2 e3))
-associater (Op Addi e1 e2)             = Op Addi (associater e1) (associater e2)
-associater (Literal valu)              = Literal valu
+associater (Op Addi (Op Addi e1 e2) e3)    = associater (Op Addi e1 (Op Addi e2 e3))
+associater (Op Addi e1 e2)                 = Op Addi (associater e1) (associater e2)
+associater (Literal valu)                  = Literal valu
