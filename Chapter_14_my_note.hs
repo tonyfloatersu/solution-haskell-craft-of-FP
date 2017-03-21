@@ -81,7 +81,15 @@ assocr (Liter val)             = Liter val
 
 data Expression = Literal Integer
                 | Op Ops Expression Expression
+                | If BExp Expression Expression
+
 data Ops = Addi | Subs | Mult | Divi | Modu
+
+data BExp = BoolLit Bool
+          | And BExp BExp
+          | Not BExp
+          | Equal Expression Expression
+          | Greater Expression Expression
 
 evaluate :: Expression -> Integer
 evaluate (Literal valu)         = valu
@@ -94,6 +102,16 @@ evaluate (Op Divi exp1 exp2)    = if evaluate exp2 == 0
 evaluate (Op Modu exp1 exp2)    = if evaluate exp2 == 0
                                   then error "wrong mod, snd val is 0"
                                   else mod (evaluate exp1) (evaluate exp2)
+evaluate (If what exp1 exp2)    = if bevaluate what
+                                  then evaluate exp1
+                                  else evaluate exp2
+
+bevaluate :: BExp -> Bool
+bevaluate (BoolLit boo)      = boo
+bevaluate (And b1 b2)        = bevaluate b1 && bevaluate b2
+bevaluate (Not b1)           = (not . bevaluate) b1
+bevaluate (Equal e1 e2)      = evaluate e1 == evaluate e2
+bevaluate (Greater e1 e2)    = evaluate e1 > evaluate e2
 
 instance Show Expression where
     show (Literal val)          = show val
@@ -102,6 +120,14 @@ instance Show Expression where
     show (Op Mult exp1 exp2)    = "(" ++ show exp1 ++ " * " ++ show exp2 ++ ")"
     show (Op Divi exp1 exp2)    = "(" ++ show exp1 ++ " / " ++ show exp2 ++ ")"
     show (Op Modu exp1 exp2)    = "(" ++ show exp1 ++ " mod " ++ show exp2 ++ ")"
+    show (If what exp1 exp2)    = "(" ++ show exp1 ++ show what ++ show exp2 ++ ")"
+
+instance Show BExp where
+    show (BoolLit boo)          = show boo
+    show (And bexp1 bexp2)      = "(" ++ show bexp1 ++ " and " ++ show bexp2 ++ ")"
+    show (Not bexp)             = "(" ++ "not " ++ show bexp ++ ")"
+    show (Equal exp1 exp2)      = "(" ++ show exp1 ++ " == " ++ show exp2 ++ ")"
+    show (Greater exp1 exp2)    = "(" ++ show exp1 ++ " > " ++ show exp2 ++ ")"
 
 sizeexpr :: Expression -> Integer
 sizeexpr (Literal _)     = 0
