@@ -293,4 +293,11 @@ squashMaybe :: Maybe (Maybe a) -> Maybe a
 squashMaybe    = maybe Nothing id
 
 composeMaybe :: (a -> Maybe b) -> (b -> Maybe c) -> (a -> Maybe c)
-composeMaybe f1 f2    = undefined
+composeMaybe f1 f2 x    = maybe Nothing f2 (f1 x)
+
+composeMaybeMap :: (a -> Maybe b) -> (b -> Maybe c) -> (a -> Maybe c)
+composeMaybeMap f1 f2 x    = (squashMaybe . mapMaybe f2) (f1 x)
+
+data Err a = OK a | Error String
+
+-- maybeErr :: (a -> b)
