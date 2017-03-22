@@ -213,7 +213,6 @@ mapTree f (NodeT vnd lt rt)    = NodeT (f vnd) (mapTree f lt) (mapTree f rt)
 data EitherTp a b = ELeft a
                   | ERight b
                   deriving (Eq, Ord, Read, Show)
--- copy the either
 
 isLeftTp :: EitherTp a b -> Bool
 isLeftTp (ELeft _)     = True
