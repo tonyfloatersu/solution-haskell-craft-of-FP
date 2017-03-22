@@ -37,7 +37,7 @@ depth NilT                        = 0
 depth (Node _ tree1 tree2)        = 1 + max (depth tree1) (depth tree2)
 
 occurs :: Ntree -> Integer -> Integer
-occurs NilT _    = 0
+occurs NilT _                = 0
 occurs (Node val t1 t2) p    = (if val == p then 1 else 0) + occurs t1 p + occurs t2 p
 
 assoc :: Expr -> Expr
@@ -270,3 +270,27 @@ ingtree val tree    = val `elem` glist tree
 mapGtree :: (a -> b) -> GTree a -> GTree b
 mapGtree f (Leaf val)       = (Leaf . f) val
 mapGtree f (Gnode trees)    = (Gnode . map (mapGtree f)) trees
+
+safeDiv :: Integer -> Integer -> Maybe Integer
+safeDiv vala valb
+    | valb /= 0    = Just (vala `div` valb)
+    | otherwise    = Nothing
+
+mapMaybe :: (a -> b) -> Maybe a -> Maybe b
+mapMaybe _ Nothing     = Nothing
+mapMaybe g (Just x)    = Just (g x)
+
+binscope :: [Int] -> (Int, Int) -> Bool
+binscope xs (n, m)    = 0 <= n && n < length xs && m < length xs && 0 <= m
+
+inscope :: [Int] -> (Int, Int) -> Maybe (Int, Int)
+inscope xs (n, m)    = if binscope xs (n, m) then Just (n, m) else Nothing
+
+process :: [Int] -> Int -> Int -> Int
+process xs n m    = maybe 0 (uncurry (+)) (inscope xs (n, m))
+
+squashMaybe :: Maybe (Maybe a) -> Maybe a
+squashMaybe    = maybe Nothing id
+
+composeMaybe :: (a -> Maybe b) -> (b -> Maybe c) -> (a -> Maybe c)
+composeMaybe f1 f2    = undefined
