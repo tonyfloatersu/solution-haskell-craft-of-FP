@@ -174,8 +174,71 @@ data Person = Adult { name :: String
 
 showBio :: Bio -> String
 showBio (Parent names humans)    = names ++ concatMap showPerson humans
-showBio (NonParent names)          = names
+showBio (NonParent names)        = names
 
 showPerson :: Person -> String
 showPerson (Adult _name _address _bio)    = _name ++ _address ++ showBio _bio
 showPerson (Child _name)                  = _name
+
+data Pairs a = Pr a a
+
+equalPair :: Eq a => Pairs a -> Bool
+equalPair (Pr va vb)    = va == vb
+
+infixr 5 :::
+data List a = NilL
+            | a ::: (List a)
+            deriving (Eq, Ord, Show, Read)
+
+data Tree a = Nil
+            | NodeT a (Tree a) (Tree a)
+            deriving (Eq, Ord, Show, Read)
+
+depthT :: Tree a -> Integer
+depthT Nil                  = 0
+depthT (NodeT _ lft rht)    = 1 + max (depthT lft) (depthT rht)
+
+occursT :: Eq a => Tree a -> a -> Integer
+occursT Nil _                    = 0
+occursT (NodeT vnd lft rht) t    = (if vnd == t then 1 else 0) + occursT lft t + occursT rht t
+
+collapseT :: Tree a -> [a]
+collapseT Nil                  = []
+collapseT (NodeT v lft rht)    = collapseT lft ++ [v] ++ collapseT rht
+
+mapTree :: (a -> b) -> Tree a -> Tree b
+mapTree _ Nil                  = Nil
+mapTree f (NodeT vnd lt rt)    = NodeT (f vnd) (mapTree f lt) (mapTree f rt)
+
+data EitherTp a b = ELeft a
+                  | ERight b
+                  deriving (Eq, Ord, Read, Show)
+-- copy the either
+
+isLeftTp :: EitherTp a b -> Bool
+isLeftTp (ELeft _)     = True
+isLeftTp (ERight _)    = False
+
+eitherTp :: (a -> c) -> (b -> c) -> EitherTp a b -> c
+eitherTp f _ (ELeft vl)     = f vl
+eitherTp _ f (ERight vl)    = f vl
+
+applyLft :: (a -> c) -> EitherTp a b -> c
+applyLft f (ELeft v)     = f v
+applyLft _ (ERight _)    = error "apply to the right"
+
+twist :: EitherTp a b -> EitherTp b a
+twist (ELeft vl)     = ERight vl
+twist (ERight vr)    = ELeft vr
+
+applyLftEth :: (a -> c) -> EitherTp a b -> c
+applyLftEth f    = eitherTp f (\_ -> error "apply to the right")
+
+changeToLeft :: (a -> b) -> (a -> EitherTp b c)
+changeToLeft f    = ELeft . f
+
+changeToRight :: (a -> b) -> (a -> EitherTp c b)
+changeToRight f    = ERight . f
+
+joinTp :: (a -> c) -> (b -> d) -> EitherTp a b -> EitherTp c d
+joinTp f1 f2    = eitherTp (ELeft . f1) (ERight . f2)
