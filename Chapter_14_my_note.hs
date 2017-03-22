@@ -299,6 +299,7 @@ composeMaybeMap :: (a -> Maybe b) -> (b -> Maybe c) -> (a -> Maybe c)
 composeMaybeMap f1 f2    = squashMaybe . mapMaybe f2 . f1
 
 data Err a = OK a | Error String
+             deriving (Show, Eq, Ord, Read)
 
 mapmaybeErr :: (a -> b) -> Err a -> Err b
 mapmaybeErr _ (Error str)    = Error str
@@ -310,3 +311,9 @@ maybeErr _ f (OK vala)    = f vala
 
 composeMaybeErr :: (a -> Err b) -> (b -> Err c) -> (a -> Err c)
 composeMaybeErr f1 f2    = maybeErr (Error "Nothing in a") f2 . f1
+
+squashErr :: Err (Err a) -> Err a
+squashErr    = maybeErr (Error "wrong nothing") id
+
+composeMaybeErrMap :: (a -> Err b) -> (b -> Err c) -> (a -> Err c)
+composeMaybeErrMap f1 f2    = squashErr . mapmaybeErr f2 . f1
