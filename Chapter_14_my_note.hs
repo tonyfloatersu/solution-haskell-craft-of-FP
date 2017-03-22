@@ -242,3 +242,31 @@ changeToRight f    = ERight . f
 
 joinTp :: (a -> c) -> (b -> d) -> EitherTp a b -> EitherTp c d
 joinTp f1 f2    = eitherTp (ELeft . f1) (ERight . f2)
+
+data GTree a = Leaf a
+             | Gnode [GTree a]
+             deriving (Eq, Show, Ord, Read)
+
+leafNum :: GTree a -> Integer
+leafNum (Leaf _)         = 1
+leafNum (Gnode trees)    = (sum . map leafNum) trees
+
+depthG :: GTree a -> Integer
+depthG (Gnode [])       = 0
+depthG (Leaf _)         = 1
+depthG (Gnode trees)    = 1 + maximum (map depthG trees)
+
+sumGtree :: Num a => GTree a -> a
+sumGtree (Leaf val)       = val
+sumGtree (Gnode trees)    = (sum . map sumGtree) trees
+
+glist :: GTree a -> [a]
+glist (Leaf val)       = [val]
+glist (Gnode trees)    = concatMap glist trees
+
+ingtree :: Eq a => a -> GTree a -> Bool
+ingtree val tree    = val `elem` glist tree
+
+mapGtree :: (a -> b) -> GTree a -> GTree b
+mapGtree f (Leaf val)       = (Leaf . f) val
+mapGtree f (Gnode trees)    = (Gnode . map (mapGtree f)) trees
