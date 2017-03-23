@@ -316,3 +316,39 @@ squashErr    = maybeErr (Error "wrong nothing") id
 
 composeMaybeErrMap :: (a -> Err b) -> (b -> Err c) -> (a -> Err c)
 composeMaybeErrMap f1 f2    = squashErr . mapmaybeErr f2 . f1
+
+data Edit = Change Char
+          | Copy
+          | Delete
+          | Insert Char
+          | Kill
+          deriving (Eq, Show)
+
+-- the kill is delete all
+
+data Inmess = No
+            | Yes { iarrival :: Integer
+                  , iservice :: Integer }
+            deriving (Eq, Show)
+
+data Outmess = None
+             | Discharge { oarrival :: Integer
+                         , oservice :: Integer
+                         , wait :: Integer }
+             deriving (Eq, Show)
+
+transform :: String -> String -> [Edit]
+transform [] []                = []
+transform _ []                 = [Kill]
+transform [] ls                = map Insert ls
+transform (x : xs) (y : ys)    = best [ Delete   : transform xs (y : ys)
+                                      , Insert y : transform (x : xs) ys
+                                      , Change y : transform xs ys ]
+
+best :: [[Edit]] -> [Edit]
+best []          = []
+best [x]         = x
+best (x : xs)    = if cost x <= (cost . best) xs then x else best xs
+
+cost :: [Edit] -> Int
+cost    = length . filter (/= Copy)
