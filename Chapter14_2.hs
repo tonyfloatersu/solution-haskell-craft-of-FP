@@ -3,7 +3,7 @@
 --  Haskell: The Craft of Functional Programming, 3e
 --  Simon Thompson
 --  (c) Addison-Wesley, 1996-2011.
--- 
+--
 --  Chapter 14, part 2
 --      Details of the Simulation case study in the Simulation directory.
 --
