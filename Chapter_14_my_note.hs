@@ -397,3 +397,39 @@ data Grade = GradeConstruct String Integer
            deriving (Eq, Show, Ord, Read)
 
 type StudentDatabase = [StudentData]
+
+data Vector = Vec Float Float
+
+class Movable a where
+    move      :: Vector -> a -> a
+    reflectX  :: a -> a
+    reflectY  :: a -> a
+    rotate180 :: a -> a
+    rotate180    = reflectX . reflectY
+
+instance Movable a => Movable [a] where
+    move v       = map (move v)
+    reflectX     = map reflectX
+    reflectY     = map reflectY
+    rotate180    = map rotate180
+
+data Point = Point Float Float
+           deriving Show
+
+instance Movable Point where
+    move (Vec v1 v2) (Point p1 p2)    = Point (p1 + v1) (p2 + v2)
+    reflectX (Point p1 p2)            = Point p1 (-p2)
+    reflectY (Point p1 p2)            = Point (-p1) p2
+    rotate180 (Point p1 p2)           = Point (-p1) (-p2)
+
+data Figure = Line Point Point
+            | Circle Point Float
+            deriving Show
+
+instance Movable Figure where
+    move vec (Line p1 p2)      = Line (move vec p1) (move vec p2)
+    move vec (Circle p1 rd)    = Circle (move vec p1) rd
+    reflectX (Line p1 p2)      = Line (reflectX p1) (reflectX p2)
+    reflectX (Circle p1 rd)    = Circle (reflectX p1) rd
+    reflectY (Line p1 p2)      = Line (reflectY p1) (reflectY p2)
+    reflectY (Circle p1 rd)    = Circle (reflectY p1) rd
