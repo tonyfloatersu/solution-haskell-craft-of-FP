@@ -379,3 +379,21 @@ edonce Kill _                 = []
 edonce Swap (x1 : x2 : xs)    = x2 : x1 : xs
 edonce Swap [x]               = [x]
 edonce Swap []                = []
+
+data CarData = CarDataConstruct { carName :: String
+                                , carSize :: Integer
+                                , duration :: Either Integer (Integer, Integer) }
+             deriving (Eq, Show, Ord, Read)
+
+data OilEff = OilEffConstruct { oilDurPerHund :: [Float] }
+            deriving (Eq, Show, Ord, Read)
+
+data StudentData = StudentConstruct { studName :: String
+                                    , studGend :: String
+                                    , studGrad :: [Grade] }
+                 deriving (Eq, Show, Ord, Read)
+
+data Grade = GradeConstruct String Integer
+           deriving (Eq, Show, Ord, Read)
+
+type StudentDatabase = [StudentData]
