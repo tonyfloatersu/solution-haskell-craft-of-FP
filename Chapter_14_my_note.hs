@@ -485,4 +485,6 @@ class (Movable a, Named a) => NamedMovable a where
 
 instance Movable a => NamedMovable (Name a)
 
+-- this works the same method like something above
+
 instance (Movable a, Named b) => NamedMovable (a, b)
