@@ -324,8 +324,6 @@ data Edit = Change Char
           | Kill
           deriving (Eq, Show)
 
--- the kill is delete all
-
 data Inmess = No
             | Yes { iarrival :: Integer
                   , iservice :: Integer }
