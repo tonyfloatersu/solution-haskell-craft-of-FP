@@ -4,6 +4,7 @@
 module Chapter_14_my_note where
 
 import           Chapter_7_my_note (qSort)
+import           Test.QuickCheck
 
 data Ntree = NilT
            | Node Integer Ntree Ntree
@@ -339,9 +340,11 @@ transform :: String -> String -> [Edit]
 transform [] []                = []
 transform _ []                 = [Kill]
 transform [] ls                = map Insert ls
-transform (x : xs) (y : ys)    = best [ Delete   : transform xs (y : ys)
-                                      , Insert y : transform (x : xs) ys
-                                      , Change y : transform xs ys ]
+transform (x : xs) (y : ys)    = if x == y
+                                 then Copy : transform xs ys
+                                 else best [ Delete   : transform xs (y : ys)
+                                           , Insert y : transform (x : xs) ys
+                                           , Change y : transform xs ys ]
 
 best :: [[Edit]] -> [Edit]
 best []          = []
@@ -350,3 +353,23 @@ best (x : xs)    = if cost x <= (cost . best) xs then x else best xs
 
 cost :: [Edit] -> Int
 cost    = length . filter (/= Copy)
+
+propTransform :: String -> String -> Property
+propTransform xs ys    = length (xs ++ ys) <= 15 ==>
+    cost (transform xs ys) <= length ys + 1
+
+edit :: [Edit] -> String -> String
+edit [] strorg          = strorg
+edit (x : xs) strorg    = if x /= Kill
+                          then head aline : edit xs (tail aline)
+                          else aline
+  where aline           = edonce x strorg :: String
+
+edonce :: Edit -> String -> String
+edonce (Change _) []      = []
+edonce (Change ch) str    = ch : tail str
+edonce Copy str           = str
+edonce Delete []          = []
+edonce Delete str         = tail str
+edonce (Insert ch) str    = ch : str
+edonce Kill _             = []
