@@ -407,11 +407,19 @@ class Movable a where
     rotate180 :: a -> a
     rotate180    = reflectX . reflectY
 
+class MovablePlus a where
+    scope  :: Int -> a -> a
+    rotate :: Float -> a -> a
+
 instance Movable a => Movable [a] where
     move v       = map (move v)
     reflectX     = map reflectX
     reflectY     = map reflectY
     rotate180    = map rotate180
+
+instance MovablePlus a => MovablePlus [a] where
+    scope sz     = map (scope sz)
+    rotate ag    = map (rotate ag)
 
 data Point = Point Float Float
            deriving Show
