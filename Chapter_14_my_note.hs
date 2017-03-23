@@ -322,6 +322,7 @@ data Edit = Change Char
           | Copy
           | Delete
           | Insert Char
+          | Swap
           | Kill
           deriving (Eq, Show)
 
@@ -340,6 +341,8 @@ transform :: String -> String -> [Edit]
 transform [] []                = []
 transform _ []                 = [Kill]
 transform [] ls                = map Insert ls
+transform (x1 : x2 : xs) (y1 : y2 : ys)
+    | x1 == y2 && y1 == x2     = Swap : transform xs ys
 transform (x : xs) (y : ys)    = if x == y
                                  then Copy : transform xs ys
                                  else best [ Delete   : transform xs (y : ys)
@@ -360,16 +363,19 @@ propTransform xs ys    = length (xs ++ ys) <= 15 ==>
 
 edit :: [Edit] -> String -> String
 edit [] strorg          = strorg
-edit (x : xs) strorg    = if x /= Kill
+edit (x : xs) strorg    = if x /= Kill && x /= Swap
                           then head aline : edit xs (tail aline)
-                          else aline
+                          else edit xs aline
   where aline           = edonce x strorg :: String
 
 edonce :: Edit -> String -> String
-edonce (Change _) []      = []
-edonce (Change ch) str    = ch : tail str
-edonce Copy str           = str
-edonce Delete []          = []
-edonce Delete str         = tail str
-edonce (Insert ch) str    = ch : str
-edonce Kill _             = []
+edonce (Change _) []          = []
+edonce (Change ch) str        = ch : tail str
+edonce Copy str               = str
+edonce Delete []              = []
+edonce Delete str             = tail str
+edonce (Insert ch) str        = ch : str
+edonce Kill _                 = []
+edonce Swap (x1 : x2 : xs)    = x2 : x1 : xs
+edonce Swap [x]               = [x]
+edonce Swap []                = []
