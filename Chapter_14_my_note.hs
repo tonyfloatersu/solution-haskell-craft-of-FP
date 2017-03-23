@@ -310,7 +310,7 @@ maybeErr n _ (Error _)    = n
 maybeErr _ f (OK vala)    = f vala
 
 composeMaybeErr :: (a -> Err b) -> (b -> Err c) -> (a -> Err c)
-composeMaybeErr f1 f2    = maybeErr (Error "Nothing in a") f2 . f1
+composeMaybeErr f1 f2    = maybeErr (Error "Nothing in a type, or input") f2 . f1
 
 squashErr :: Err (Err a) -> Err a
 squashErr    = maybeErr (Error "wrong nothing") id
