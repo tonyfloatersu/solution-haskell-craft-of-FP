@@ -434,18 +434,28 @@ instance Movable Figure where
     reflectY (Line p1 p2)      = Line (reflectY p1) (reflectY p2)
     reflectY (Circle p1 rd)    = Circle (reflectY p1) rd
 
+-- this is how two classes merge together to make a new class
+
+-- Named is a class, show the name and give the name to the Name data
+
 class Named a where
     lookName :: a -> String
     giveName :: String -> a -> a
 
 data Name a = Pair a String
 
+-- this is how Named (the function class) work on the Name (data type)
+
 instance Named (Name a) where
     lookName (Pair _ nm)      = nm
     giveName nm (Pair o _)    = Pair o nm
 
+-- this is how map function on the Name (data type)
+
 mapName :: (a -> b) -> Name a -> Name b
 mapName f (Pair va nm)    = Pair (f va) nm
+
+-- how Moveable (function class) work on the Name (data type)
 
 instance Movable a => Movable (Name a) where
     move v       = mapName (move v)
@@ -453,6 +463,14 @@ instance Movable a => Movable (Name a) where
     reflectY     = mapName reflectY
     rotate180    = mapName rotate180
 
+-- then merge two classes into one
+
 class (Movable a, Named a) => NamedMovable a where
+
+-- since we have instance Named (Name a) and Movable a => Movable (Name a)
+-- then we know that this two can be applied here to help the merge
+-- since Named (Name a) is not controlled
+-- and the Movable (Name a) here is need Movable a => Movable (Name a)
+-- thus here we use the Movable a => NamedMovable (Name a) to satisfy both
 
 instance Movable a => NamedMovable (Name a)
