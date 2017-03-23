@@ -434,6 +434,12 @@ instance Movable Figure where
     reflectY (Line p1 p2)      = Line (reflectY p1) (reflectY p2)
     reflectY (Circle p1 rd)    = Circle (reflectY p1) rd
 
+instance Movable a => Movable (a, b) where
+    move vec (apply, rest)     = (move vec apply, rest)
+    reflectX (apply, rest)     = (reflectX apply, rest)
+    reflectY (apply, rest)     = (reflectY apply, rest)
+    rotate180 (apply, rest)    = (rotate180 apply, rest)
+
 -- this is how two classes merge together to make a new class
 
 -- Named is a class, show the name and give the name to the Name data
@@ -441,6 +447,10 @@ instance Movable Figure where
 class Named a where
     lookName :: a -> String
     giveName :: String -> a -> a
+
+instance Named b => Named (a, b) where
+    lookName (_, apply)          = lookName apply
+    giveName nm (rest, apply)    = (rest, giveName nm apply)
 
 data Name a = Pair a String
 
@@ -474,3 +484,5 @@ class (Movable a, Named a) => NamedMovable a where
 -- thus here we use the Movable a => NamedMovable (Name a) to satisfy both
 
 instance Movable a => NamedMovable (Name a)
+
+instance (Movable a, Named b) => NamedMovable (a, b)
