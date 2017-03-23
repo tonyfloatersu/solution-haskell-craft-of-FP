@@ -496,3 +496,13 @@ instance Movable a => NamedMovable (Name a)
 -- this works the same method like something above
 
 instance (Movable a, Named b) => NamedMovable (a, b)
+
+class Named a => BankAccount a where
+    changeMoney :: Integer -> a -> a
+    findName    :: a -> String
+    newUser     :: String -> a -> a
+
+instance Named b => BankAccount (Integer, b) where
+    changeMoney new (money, rest)    = (new + money, rest)
+    findName                         = lookName
+    newUser                          = giveName
