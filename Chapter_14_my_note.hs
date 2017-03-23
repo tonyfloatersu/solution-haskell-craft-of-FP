@@ -433,3 +433,26 @@ instance Movable Figure where
     reflectX (Circle p1 rd)    = Circle (reflectX p1) rd
     reflectY (Line p1 p2)      = Line (reflectY p1) (reflectY p2)
     reflectY (Circle p1 rd)    = Circle (reflectY p1) rd
+
+class Named a where
+    lookName :: a -> String
+    giveName :: String -> a -> a
+
+data Name a = Pair a String
+
+instance Named (Name a) where
+    lookName (Pair _ nm)      = nm
+    giveName nm (Pair o _)    = Pair o nm
+
+mapName :: (a -> b) -> Name a -> Name b
+mapName f (Pair va nm)    = Pair (f va) nm
+
+instance Movable a => Movable (Name a) where
+    move v       = mapName (move v)
+    reflectX     = mapName reflectX
+    reflectY     = mapName reflectY
+    rotate180    = mapName rotate180
+
+class (Movable a, Named a) => NamedMovable a where
+
+instance Movable a => NamedMovable (Name a)
