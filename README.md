@@ -17,6 +17,8 @@ Here I have finished Chapter 13, it is 2017/3/21.
 
 Here I have finished Chapter 14, it is 2017/3/23.
 
+Here I have finished Chapter 15, it is 2017/3/24.
+
 I would like to take notes about the date I finish each chapter.
 
 Any question and issues will be warmly welcomed. I would be very glad if any of you read my code.
