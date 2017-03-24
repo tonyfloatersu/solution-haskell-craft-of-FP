@@ -1,4 +1,4 @@
-module Bee where 
+module Bee where
 
 import Ant hiding ( anteater )
 import qualified Ant 
