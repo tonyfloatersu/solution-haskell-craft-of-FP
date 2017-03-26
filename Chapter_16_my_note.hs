@@ -28,3 +28,25 @@ import           LibraryADT ( Database
                             , numborrowed
                             , makeLoan
                             , returnLoan )
+
+import           Queue ( Queue
+                       , emptyQ
+                       , isEmptyQ
+                       , addQ
+                       , remQ )
+
+import           Deque ( Deque
+                       , emptyDQ
+                       , isEmptyDQ
+                       , addFDQ
+                       , addBDQ
+                       , remFDQ
+                       , remBDQ )
+
+import           DequeDL ( DequeDL
+                         , emptyDQDL
+                         , isEmptyDQDL
+                         , addFDQDL
+                         , addBDQDL
+                         , remFDQDL
+                         , remBDQDL )
