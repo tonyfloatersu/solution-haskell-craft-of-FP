@@ -19,3 +19,12 @@ import           StoreF ( StoreF
                         , updateF
                         , valueF
                         , setAll )
+
+import           LibraryADT ( Database
+                            , initDB
+                            , books
+                            , borrowers
+                            , borrowed
+                            , numborrowed
+                            , makeLoan
+                            , returnLoan )
