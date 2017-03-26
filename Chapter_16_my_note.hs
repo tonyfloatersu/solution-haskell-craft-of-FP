@@ -50,3 +50,9 @@ import           DequeDL ( DequeDL
                          , addBDQDL
                          , remFDQDL
                          , remBDQDL )
+
+import           PropertyQue ( PropertyQue
+                             , emptyPQ
+                             , isEmptyPQ
+                             , addPQ
+                             , remPQ )
