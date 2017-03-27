@@ -89,3 +89,18 @@ import           Chapter_12_my_note ( Doc
                                     , _splitWds
                                     , numWords
                                     , _lines )
+
+import           QueueState ( QueueState
+                            , addMessage
+                            , queueStep
+                            , queueStart
+                            , queueLength
+                            , queueEmpty )
+
+import           ServerState ( ServerState
+                             , addToQueue
+                             , serverStep
+                             , simulationStep
+                             , serverStart
+                             , serverSize
+                             , shortestQueue )
