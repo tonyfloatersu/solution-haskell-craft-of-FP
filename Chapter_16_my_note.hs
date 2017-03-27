@@ -1,5 +1,9 @@
 module Chapter_16_my_note where
 
+import           Prelude hiding (Word)
+
+import qualified Prelude as P
+
 import           StoreSeq ( StoreS
                           , initialS
                           , updateS
@@ -56,3 +60,32 @@ import           PropertyQue ( PropertyQue
                              , isEmptyPQ
                              , addPQ
                              , remPQ )
+
+import           TreeADT ( Tree
+                         , nil
+                         , isNil
+                         , isNode
+                         , leftSub
+                         , rightSub
+                         , treeVal
+                         , insTree
+                         , delete
+                         , minTree
+                         , elemT )
+
+import           Chapter_12_my_note ( Doc
+                                    , Line
+                                    , Word
+                                    , makeIndex
+                                    , shorten
+                                    , amalgamate
+                                    , makeLists
+                                    , sortLs
+                                    , orderPair
+                                    , smallerThan
+                                    , allNumWords
+                                    , whiteSpace
+                                    , cleanHead
+                                    , _splitWds
+                                    , numWords
+                                    , _lines )
