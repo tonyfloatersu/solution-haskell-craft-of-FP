@@ -104,3 +104,11 @@ import           ServerState ( ServerState
                              , serverStart
                              , serverSize
                              , shortestQueue )
+
+import           NServerState ( NServerState
+                              , naddToQueue
+                              , nserverStep
+                              , nsimulationStep
+                              , nserverStart
+                              , nserverSize
+                              , nshortestQueue )
