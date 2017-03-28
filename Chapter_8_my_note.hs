@@ -1,10 +1,12 @@
 module Chapter_8_my_note where
 
-import           Chapter_7_my_note (isPalin, splitWord, qSort)
 import           Data.Time.Clock
 import           Data.Time.Format
 import           System.IO.Unsafe
 import           Test.QuickCheck
+import           Chapter_7_my_note ( isPalin, splitWord, qSort, getWord
+                                   , dropHeadSpace, dropWord )
+import           Data.Char ( toLower )
 
 data Move = Rock | Paper | Scissors
             deriving Eq
