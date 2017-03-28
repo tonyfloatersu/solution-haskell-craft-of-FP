@@ -8,7 +8,8 @@ module TreeADT ( Tree
                , insTree
                , delete
                , minTree
-               , elemT ) where
+               , elemT
+               , showTree ) where
 
 data Tree a = Nil | Node a (Tree a) (Tree a)
 
@@ -64,3 +65,16 @@ elemT val (Node wh tl tr)
     | val < wh     = elemT val tl
     | val > wh     = elemT val tr
     | otherwise    = True
+
+showTree :: (Show a) => Tree a -> String
+showTree Nil                  = "empty root."
+showTree (Node what tl tr)    = unlines (showTreeSub (Node what tl tr))
+
+showTreeSub :: (Show a) => Tree a -> [String]
+showTreeSub Nil                   = []
+showTreeSub (Node ele tl_ tr_)    = show ele : showSubs tl_ tr_
+  where pad :: String -> String -> [String] -> [String]
+        pad s1 s2    = zipWith (++) (s1 : repeat s2)
+        showSubs :: (Show a) => Tree a -> Tree a -> [String]
+        showSubs _tl _tr    = pad "+- " "|  " (showTreeSub _tl)
+                              ++ pad "`- " "   " (showTreeSub _tr)

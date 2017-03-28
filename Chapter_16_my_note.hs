@@ -71,7 +71,8 @@ import           TreeADT ( Tree
                          , insTree
                          , delete
                          , minTree
-                         , elemT )
+                         , elemT
+                         , showTree )
 
 import           Chapter_12_my_note ( Doc
                                     , Line
