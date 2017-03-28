@@ -1,6 +1,5 @@
 module Chapter_12_my_note where
 
-import           Pictures (horse)
 import           Test.QuickCheck
 import           Chapter_8_my_note (randInt)
 import           Prelude hiding ((<*>), Word)
