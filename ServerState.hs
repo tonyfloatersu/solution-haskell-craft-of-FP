@@ -50,4 +50,4 @@ shortestQueue (SS [_])                 = 0
 shortestQueue (SS (q : qs))
     | queueLength (qs !! shortestQueue (SS qs))
                    <= queueLength q    = 1 + shortestQueue (SS qs)
-    | otherwise                        = undefined
+    | otherwise                        = 0
