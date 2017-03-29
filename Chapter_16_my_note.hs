@@ -113,3 +113,18 @@ import           NServerState ( NServerState
                               , nserverStart
                               , nserverSize
                               , nshortestQueue )
+
+import           STree ( STree
+                       , snil
+                       , sisNil
+                       , sisNode
+                       , sleftSub
+                       , srightSub
+                       , streeVal
+                       , sinsTree
+                       , sdelete
+                       , sminTree
+                       , sindexT
+                       , successor
+                       , ancientor
+                       , closest )
