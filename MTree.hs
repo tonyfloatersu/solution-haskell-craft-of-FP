@@ -15,6 +15,10 @@ module MTree ( MTree
              , mancientor
              , mcloset ) where
 
+import           Data.Maybe ( isNothing
+                            , isJust
+                            , fromJust )
+
 data Decode a = Decode { elenode :: a
                        , occurance :: Int
                        , treesize :: Int }
@@ -98,11 +102,22 @@ msuccessor :: (Eq a, Ord a) => a -> MTree a -> Maybe a
 msuccessor _ MNil                                  = Nothing
 msuccessor v (MNode (Decode ndv _ _) MNil MNil)    = if ndv > v then Just ndv else Nothing
 msuccessor v (MNode (Decode ndv _ _) tl tr)
-    | v < ndv                                      = msuccessor v tl
+    | v < ndv                                      = msuccessor v (minsTree ndv tl)
     | otherwise                                    = msuccessor v tr
 
 mancientor :: (Eq a, Ord a) => a -> MTree a -> Maybe a
-mancientor    = undefined
+mancientor _ MNil                                  = Nothing
+mancientor v (MNode (Decode ndv _ _) MNil MNil)    = if ndv < v then Just ndv else Nothing
+mancientor v (MNode (Decode ndv _ _) tl tr)
+    | v > ndv                                      = msuccessor v (minsTree ndv tr)
+    | otherwise                                    = msuccessor v tl
 
 mcloset :: Int -> MTree Int -> Int
-mcloset    = undefined
+mcloset val tree
+    | isNothing sucs       = fromJust anct
+    | isNothing anct       = fromJust sucs
+    | otherwise            = clsr (fromJust anct) (fromJust sucs) val
+  where sucs               = msuccessor val tree
+        anct               = mancientor val tree
+        clsr :: Int -> Int -> Int -> Int
+        clsr vl vr _val    = if _val - vl > vr - _val then vr else vl
