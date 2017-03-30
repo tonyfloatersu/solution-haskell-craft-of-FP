@@ -128,3 +128,20 @@ import           STree ( STree
                        , successor
                        , ancientor
                        , closest )
+
+import           MTree ( MTree
+                       , mnil
+                       , misNil
+                       , misNode
+                       , mleftSub
+                       , mrightSub
+                       , mtreeVal
+                       , minsTree
+                       , mfindVal
+                       , mdelete
+                       , mminTree
+                       , mmaxTree
+                       , mindexT
+                       , msuccessor
+                       , mancientor
+                       , mcloset )
