@@ -11,9 +11,8 @@ module Set ( Set
            , mapSet
            , filterSet
            , foldSet
---           , showSet
---           , card ) where
-) where
+           , showSet
+           , card ) where
 
 import           Data.List hiding (union)
 
@@ -98,5 +97,11 @@ mapSet f (Set as)    = (makeSet . map f) as
 filterSet :: (a -> Bool) -> Set a -> Set a
 filterSet f (Set as)    = (Set . filter f) as
 
-foldSet :: (a -> a -> a) -> a -> Set a -> a
+foldSet :: (a -> b -> b) -> b -> Set a -> b
 foldSet f x (Set as)    = foldr f x as
+
+showSet :: (a -> String) -> Set a -> String
+showSet f (Set xs)    = (unlines . map f) xs
+
+card :: Set a -> Int
+card (Set xs)    = length xs
