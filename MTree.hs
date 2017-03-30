@@ -80,8 +80,15 @@ mdelete v (MNode (Decode ndv occ trsz) lht rht)
     | otherwise     = undefined
   where mjoin                                = MNode (Decode _max occ twosz)
                                                       lht (mdelete _max rht)
-        treesz :: MTree a -> Int
-        treesz (MNode (Decode _ _ s) _ _)    = s
         twosz                                = treesz lht + treesz rht :: Int
         (Just max)                           = mmaxTree rht
         (Just (_max, occ))                   = mfindVal max rht
+
+treesz :: MTree a -> Int
+treesz (MNode (Decode _ _ s) _ _)    = s
+
+mindexT :: Int -> MTree a -> Maybe a
+mindexT _ MNil    = Nothing
+mindexT n tr@ (MNode (Decode ndv _ sz) lh rh)
+    | n > sz      = Nothing
+    | n == sz     = Just ndv
