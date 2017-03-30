@@ -20,7 +20,7 @@ import           Data.Maybe ( isNothing
                             , fromJust )
 
 data Decode a = Decode { elenode :: a
-                       , occurance :: Int
+                       , occur :: Int
                        , treesize :: Int }
                        deriving (Eq, Show)
 
