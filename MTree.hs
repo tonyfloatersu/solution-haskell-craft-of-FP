@@ -15,7 +15,7 @@ module MTree ( MTree
              , mancientor
              , mcloset ) where
 
-data Decode a = Decode { element_nd :: a
+data Decode a = Decode { elenode :: a
                        , occurance :: Int
                        , treesize :: Int }
                        deriving (Eq, Show)
@@ -41,11 +41,11 @@ mrightSub MNil             = MNil
 mrightSub (MNode _ _ r)    = r
 
 mtreeVal :: MTree a -> Maybe a
-mtreeVal MNil                        = Nothing
+mtreeVal MNil                          = Nothing
 mtreeVal (MNode (Decode v _ _) _ _)    = Just v
 
 mfindVal :: (Eq a, Ord a) => a -> MTree a -> Maybe (a, Int)
-mfindVal v MNil    = Nothing
+mfindVal _ MNil    = Nothing
 mfindVal v (MNode (Decode ndv oc _) rht lht)
     | v == ndv     = Just (ndv, oc)
     | v < ndv      = mfindVal v rht
@@ -77,18 +77,32 @@ mdelete v (MNode (Decode ndv occ trsz) lht rht)
     | v > ndv       = MNode (Decode ndv occ (trsz - 1)) lht (mdelete v rht)
     | misNil rht    = lht
     | misNil lht    = rht
-    | otherwise     = undefined
-  where mjoin                                = MNode (Decode _max occ twosz)
-                                                      lht (mdelete _max rht)
-        twosz                                = treesz lht + treesz rht :: Int
-        (Just max)                           = mmaxTree rht
-        (Just (_max, occ))                   = mfindVal max rht
+    | otherwise     = MNode (Decode _max occ_ twosz) lht (mdelete _max rht)
+  where twosz                  = treesz lht + treesz rht :: Int
+        (Just max_)            = mmaxTree rht
+        (Just (_max, occ_))    = mfindVal max_ rht
 
 treesz :: MTree a -> Int
+treesz MNil                          = 0
 treesz (MNode (Decode _ _ s) _ _)    = s
 
 mindexT :: Int -> MTree a -> Maybe a
-mindexT _ MNil    = Nothing
+mindexT _ MNil                      = Nothing
 mindexT n tr@ (MNode (Decode ndv _ sz) lh rh)
-    | n > sz      = Nothing
-    | n == sz     = Just ndv
+    | n > sz                        = Nothing
+    | n == sz                       = Just ndv
+    | n < (treesz . mleftSub) tr    = mindexT n lh
+    | otherwise                     = mindexT (n - treesz lh - 1) rh
+
+msuccessor :: (Eq a, Ord a) => a -> MTree a -> Maybe a
+msuccessor _ MNil                                  = Nothing
+msuccessor v (MNode (Decode ndv _ _) MNil MNil)    = if ndv > v then Just ndv else Nothing
+msuccessor v (MNode (Decode ndv _ _) tl tr)
+    | v < ndv                                      = msuccessor v tl
+    | otherwise                                    = msuccessor v tr
+
+mancientor :: (Eq a, Ord a) => a -> MTree a -> Maybe a
+mancientor    = undefined
+
+mcloset :: Int -> MTree Int -> Int
+mcloset    = undefined
