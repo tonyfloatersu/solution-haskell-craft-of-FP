@@ -163,6 +163,7 @@ import           SetADT ( Set
                         , powerSet
                         , setUnion
                         , setInter )
+
 import           Relation ( Relation
                           , image
                           , setImage
