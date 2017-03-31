@@ -145,3 +145,21 @@ import           MTree ( MTree
                        , msuccessor
                        , mancientor
                        , mcloset )
+
+import           SetADT ( Set
+                        , empty
+                        , sing
+                        , memSet
+                        , union, inter, diff
+                        , eqSet
+                        , subSet
+                        , makeSet
+                        , mapSet
+                        , filterSet
+                        , foldSet
+                        , showSet
+                        , card
+                        , symmDiff
+                        , powerSet
+                        , setUnion
+                        , setInter )

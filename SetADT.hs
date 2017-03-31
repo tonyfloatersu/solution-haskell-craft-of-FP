@@ -1,22 +1,22 @@
 {-# OPTIONS_GHC -XFlexibleInstances #-}
 
-module Set ( Set
-           , empty
-           , sing
-           , memSet
-           , union, inter, diff
-           , eqSet
-           , subSet
-           , makeSet
-           , mapSet
-           , filterSet
-           , foldSet
-           , showSet
-           , card
-           , symmDiff
-           , powerSet
-           , setUnion
-           , setInter ) where
+module SetADT ( Set
+              , empty
+              , sing
+              , memSet
+              , union, inter, diff
+              , eqSet
+              , subSet
+              , makeSet
+              , mapSet
+              , filterSet
+              , foldSet
+              , showSet
+              , card
+              , symmDiff
+              , powerSet
+              , setUnion
+              , setInter ) where
 
 import           Data.List hiding (union)
 
