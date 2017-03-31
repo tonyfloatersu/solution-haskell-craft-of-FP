@@ -12,11 +12,15 @@ module Set ( Set
            , filterSet
            , foldSet
            , showSet
-           , card ) where
+           , card
+           , symmDiff
+           , powerSet
+           , setUnion
+           , setInter ) where
 
 import           Data.List hiding (union)
 
-newtype Set a = Set [a]
+newtype Set a = Set [a] deriving (Show)
 
 instance Eq a => Eq (Set a) where
   (==)    = eqSet
@@ -41,9 +45,12 @@ union :: Ord a => Set a -> Set a -> Set a
 union (Set lsa) (Set lsb)    = Set (merge lsa lsb)
 
 merge :: Ord a => [a] -> [a] -> [a]
-merge (x : xs) (y : ys)    = if x < y then x : merge xs (y : ys) else y : merge (x : xs) ys
-merge [] ys                = ys
-merge xs []                = xs
+merge (x : xs) (y : ys)
+    | x < y        = x : merge xs (y : ys)
+    | x == y       = x : merge xs ys
+    | otherwise    = y : merge (x : xs) ys
+merge [] ys        = ys
+merge xs []        = xs
 
 inter :: Ord a => Set a -> Set a -> Set a
 inter (Set lsa) (Set lsb)    = Set (lsit lsa lsb)
@@ -105,3 +112,17 @@ showSet f (Set xs)    = (unlines . map f) xs
 
 card :: Set a -> Int
 card (Set xs)    = length xs
+
+symmDiff :: Ord a => Set a -> Set a -> Set a
+symmDiff sa sb    = diff sa sb `union` diff sb sa
+
+powerSet :: Ord a => Set a -> Set (Set a)
+powerSet (Set [])          = Set [Set []]
+powerSet (Set (x : xs))    = powerSet (Set xs) `union`
+                             mapSet (union (Set [x])) (powerSet (Set xs))
+
+setUnion :: Ord a => Set (Set a) -> Set a
+setUnion    = foldSet union empty
+
+setInter :: Ord a => Set (Set a) -> Set a
+setInter    = foldSet inter empty
