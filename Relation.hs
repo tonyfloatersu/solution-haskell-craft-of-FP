@@ -91,6 +91,6 @@ depthSearch :: Ord a => Relation a -> a -> [a] -> [a]
 depthSearch rel v used    = v : depthList rel (findDescs rel (v : used) v) (v : used)
 
 depthList :: Ord a => Relation a -> [a] -> [a] -> [a]
-depthList _ [] _     = []
+depthList _ [] _                   = []
 depthList rel (val : rest) used    = next ++ depthList rel rest (used ++ next)
   where next    = if val `elem` used then [] else depthSearch rel val used
