@@ -8,9 +8,14 @@ module Relation ( Relation
                 , adjoin
                 , tClosure
                 , limit
-                , connect ) where
+                , connect
+                , classes
+                , breadthFirst
+                , depthFirst ) where
 
 import           SetADT
+
+import           Data.List ( nub )
 
 type Relation a = Set (a, a)
 
@@ -60,3 +65,32 @@ connect rel    = tClosure rel `union` (inverser . tClosure) rel
 
 elems :: Ord a => Relation a -> Set a
 elems rel    = mapSet fst rel `union` mapSet snd rel
+
+addImages :: Ord a => Relation a -> Set (Set a) -> Set (Set a)
+addImages rel    = mapSet (addImage rel)
+
+classes :: Ord a => Relation a -> Set (Set a)
+classes rel    = limit (addImages rel) (mapSet sing (elems rel))
+
+newDescs :: Ord a => Relation a -> Set a -> a -> Set a
+newDescs rel st v    = image rel v `diff` st
+
+findDescs :: Ord a => Relation a -> [a] -> a -> [a]
+findDescs rel xs v    = flatten (newDescs rel (makeSet xs) v)
+
+flatten :: Set a -> [a]
+flatten    = undefined
+
+breadthFirst :: Ord a => Relation a -> a -> [a]
+breadthFirst rel val    = limit (\x -> x ++ (nub . concatMap (findDescs rel x)) x) [val]
+
+depthFirst :: Ord a => Relation a -> a -> [a]
+depthFirst rel v    = depthSearch rel v []
+
+depthSearch :: Ord a => Relation a -> a -> [a] -> [a]
+depthSearch rel v used    = v : depthList rel (findDescs rel (v : used) v) (v : used)
+
+depthList :: Ord a => Relation a -> [a] -> [a] -> [a]
+depthList _ [] _     = []
+depthList rel (val : rest) used    = next ++ depthList rel rest (used ++ next)
+  where next    = if val `elem` used then [] else depthSearch rel val used
