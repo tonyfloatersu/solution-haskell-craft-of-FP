@@ -28,3 +28,18 @@ splits (y : ys)    = ([], y : ys) : [(y : ps, rs) | (ps, rs) <- splits ys]
 -- then = [([], [x]), ([x], [])] ...
 
 type Vector = [Float]
+
+scalarProduct :: Vector -> Vector -> Float
+scalarProduct v1 v2    = sum $ zipWith (*) v1 v2
+
+type Matrix = [Vector]
+
+matrixProduct :: Matrix -> Matrix -> Matrix
+matrixProduct horz vert    = [map (scalarProduct line) (columns vert) | line <- horz]
+
+columns :: Matrix -> Matrix
+columns vert    = [[(vert !! i) !! j | i <- [0 .. length vert - 1]]
+                    | j <- [0 .. (length . head) vert - 1]]
+
+subList :: [a] -> [[a]]
+subList    = undefined
