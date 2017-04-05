@@ -78,9 +78,6 @@ newDescs rel st v    = image rel v `diff` st
 findDescs :: Ord a => Relation a -> [a] -> a -> [a]
 findDescs rel xs v    = flatten (newDescs rel (makeSet xs) v)
 
-flatten :: Set a -> [a]
-flatten    = undefined
-
 breadthFirst :: Ord a => Relation a -> a -> [a]
 breadthFirst rel val    = limit (\x -> x ++ (nub . concatMap (findDescs rel x)) x) [val]
 
