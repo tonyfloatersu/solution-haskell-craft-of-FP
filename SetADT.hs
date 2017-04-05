@@ -16,7 +16,8 @@ module SetADT ( Set
               , symmDiff
               , powerSet
               , setUnion
-              , setInter ) where
+              , setInter
+              , flatten ) where
 
 import           Data.List hiding (union)
 
@@ -126,3 +127,6 @@ setUnion    = foldSet union empty
 
 setInter :: Ord a => Set (Set a) -> Set a
 setInter    = foldSet inter empty
+
+flatten :: Set a -> [a]
+flatten (Set xs )    = xs
