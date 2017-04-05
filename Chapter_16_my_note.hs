@@ -162,7 +162,8 @@ import           SetADT ( Set
                         , symmDiff
                         , powerSet
                         , setUnion
-                        , setInter )
+                        , setInter
+                        , flatten )
 
 import           Relation ( Relation
                           , image
