@@ -42,4 +42,8 @@ columns vert    = [[(vert !! i) !! j | i <- [0 .. length vert - 1]]
                     | j <- [0 .. (length . head) vert - 1]]
 
 subList :: [a] -> [[a]]
-subList    = undefined
+subList []          = [[]]
+subList (x : xs)    = map (x : ) (subList xs) ++ subList xs
+
+subsequence :: [a] -> [[a]]
+subsequence    = filter (not . null) . concatMap (map snd . splits . fst) . splits
