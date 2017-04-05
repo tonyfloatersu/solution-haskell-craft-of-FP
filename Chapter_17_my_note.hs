@@ -111,3 +111,9 @@ list p    = succeed [] `alt` ((p >*> list p) `build` uncurry (:))
 
 dig :: Parse Char Char
 dig    = spot isDigit
+
+neList :: Parse a b -> Parse a [b]
+neList    = undefined
+
+optional :: Parse a b -> Parse a [b]
+optional    = undefined
