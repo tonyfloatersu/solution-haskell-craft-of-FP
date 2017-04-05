@@ -1,6 +1,8 @@
 module Chapter_17_my_note where
 
 import           Data.List ( (\\) )
+import           SetADT
+import           Relation
 
 pairs :: [a] -> [b] -> [(a, b)]
 pairs xs ys    = [(x, y) | x <- xs, y <- ys]
@@ -57,3 +59,6 @@ cutlen (x, y) len    = concatMap ((: []) . (len !!)) [x .. y]
 subseqlist :: [a] -> [[a]]
 subseqlist xs    = map (`cutlen` xs) lenxs
   where lenxs    = (lenpairs . length) xs :: [(Int, Int)]
+
+graphEx :: Relation Int
+graphEx    = makeSet [(1, 2), (1, 3), (2, 4), (3, 5), (3, 6), (5, 6)]
