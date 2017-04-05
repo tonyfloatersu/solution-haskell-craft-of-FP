@@ -62,3 +62,18 @@ subseqlist xs    = map (`cutlen` xs) lenxs
 
 graphEx :: Relation Int
 graphEx    = makeSet [(1, 2), (1, 3), (2, 4), (3, 5), (3, 6), (5, 6)]
+
+graphEx2 :: Relation Int
+graphEx2    = makeSet [(1, 2), (1, 3), (2, 1), (2, 4), (3, 5), (3, 6), (5, 6)]
+
+routes :: Ord a => Relation a -> a -> a -> [[a]]
+routes rel x y | x == y       = [[x]]
+               | otherwise    = [x : r | z <- nbhrs rel x, r <- routes rel z y]
+
+nbhrs :: Ord a => Relation a -> a -> [a]
+nbhrs rel x    = flatten (image rel x)
+
+routesC :: Ord a => Relation a -> a -> a -> [a] -> [[a]]
+routesC rel x y avoid | x == y       = [[x]]
+                      | otherwise    = [x : r | z <- nbhrs rel x \\ avoid
+                                              , r <- routesC rel z y (x : avoid)]
