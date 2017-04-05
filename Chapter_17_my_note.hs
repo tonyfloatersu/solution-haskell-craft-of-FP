@@ -3,6 +3,7 @@ module Chapter_17_my_note where
 import           Data.List ( (\\) )
 import           SetADT
 import           Relation
+import           Data.Char
 
 pairs :: [a] -> [b] -> [(a, b)]
 pairs xs ys    = [(x, y) | x <- xs, y <- ys]
@@ -77,3 +78,36 @@ routesC :: Ord a => Relation a -> a -> a -> [a] -> [[a]]
 routesC rel x y avoid | x == y       = [[x]]
                       | otherwise    = [x : r | z <- nbhrs rel x \\ avoid
                                               , r <- routesC rel z y (x : avoid)]
+
+type Parse a b = [a] -> [(b, [a])]
+
+none :: Parse a b
+none _    = []
+
+succeed :: b -> Parse a b
+succeed val inp    = [(val, inp)]
+
+token :: Eq a => a -> Parse a a
+token t    = spot (== t)
+
+spot :: (a -> Bool) -> Parse a a
+spot _ []                      = []
+spot p (x : xs) | p x          = [(x, xs)]
+                | otherwise    = []
+
+alt :: Parse a b -> Parse a b -> Parse a b
+alt p1 p2 inp    = p1 inp ++ p2 inp
+
+infix 5 >*>
+(>*>) :: Parse a b -> Parse a c -> Parse a (b, c)
+(>*>) p1 p2 inp    = [((y, z), rest) | (y, rem1) <- p1 inp, (z, rest) <- p2 rem1]
+-- if the p2 rem1 is void [], then the result is []
+
+build :: Parse a b -> (b -> c) -> Parse a c
+build p f inp    = [(f x, rem0) | (x, rem0) <- p inp]
+
+list :: Parse a b -> Parse a [b]
+list p    = succeed [] `alt` ((p >*> list p) `build` uncurry (:))
+
+dig :: Parse Char Char
+dig    = spot isDigit
