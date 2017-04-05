@@ -47,3 +47,13 @@ subList (x : xs)    = map (x : ) (subList xs) ++ subList xs
 
 subsequence :: [a] -> [[a]]
 subsequence    = filter (not . null) . concatMap (map snd . splits . fst) . splits
+
+lenpairs :: Int -> [(Int, Int)]
+lenpairs len    = [(x, y) | x <- [0 .. len - 1], y <- [x .. len - 1]]
+
+cutlen :: (Int, Int) -> [a] -> [a]
+cutlen (x, y) len    = concatMap ((: []) . (len !!)) [x .. y]
+
+subseqlist :: [a] -> [[a]]
+subseqlist xs    = map (`cutlen` xs) lenxs
+  where lenxs    = (lenpairs . length) xs :: [(Int, Int)]
