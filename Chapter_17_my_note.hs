@@ -28,7 +28,7 @@ splits []          = [([], [])]
 splits (y : ys)    = ([], y : ys) : [(y : ps, rs) | (ps, rs) <- splits ys]
 
 -- [x] -> ([], x : []) : [(y : ps, rs) | (ps, rs) | splits []] = ([], x : []) : [([x], [])]
--- = [([], [x]), ([x], [])] ...
+-- = [([], [x]), ([x], [])] ....
 
 type Vector = [Float]
 
