@@ -52,3 +52,37 @@ opExprParse    = (token '(' >*> (parser >*> (spot isOp >*> (parser >*> token ')'
 
 makeExpr :: (t1, (Expr, (Char, (Expr, t)))) -> Expr
 makeExpr (_, (e1, (bop, (e2, _))))    = Op (charToOp bop) e1 e2
+
+topLevel :: Parse a b -> b -> [a] -> b
+topLevel p defaultVal inp    = case results of
+                                    [] -> defaultVal
+                                    _  -> head results
+  where results              = [found | (found, []) <- p inp]
+
+data Command = Eval Expr
+             | Assign Var Expr
+             | Null
+
+parseStrToIntArr :: Parse Char [Int]
+parseStrToIntArr orig    = (cleanToSubStrFilt `build` map (\x -> read x :: Int)) cleanstr
+  where cleanstr         = preprocess orig :: String
+
+preprocess :: String -> String
+preprocess    = filter (/= ' ')
+
+valuParse :: Parse Char String
+valuParse    = (optional (token '-') >*> neList dig) `build` uncurry (++)
+
+cleanToSubStrFilt :: Parse Char [String]
+cleanToSubStrFilt    = cleanToSubStr `build` filter (\x -> x `notElem` ["[", "]", ",", ""])
+
+cleanToSubStr :: Parse Char [String]
+cleanToSubStr []    = [([], [])]
+cleanToSubStr xs    = ((optional tokenFromLs >*> (valuParse >*> cleanToSubStr))
+                       `build` decodeIntLsStr) xs
+
+decodeIntLsStr :: (String, (String, [String])) -> [String]
+decodeIntLsStr (a, (b, c))     = a : b : c
+
+tokenFromLs :: Parse Char Char
+tokenFromLs    = token ',' `alt` token '[' `alt` token ']'
