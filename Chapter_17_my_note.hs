@@ -119,5 +119,6 @@ neList p al    = ((p >*> neList p) `build` uncurry (:)) al
 optional :: Parse a b -> Parse a [b]
 optional p maybealist    = if length tesrst == length maybealist
                            then succeed [] maybealist
-                           else neList p [head maybealist]
-  where [(_, tesrst)]    = p maybealist
+                           else final
+  where [(s, tesrst)]    = p maybealist
+        final            = [([s], tesrst)]
