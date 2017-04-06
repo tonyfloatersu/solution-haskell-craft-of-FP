@@ -122,3 +122,9 @@ optional p maybealist    = if length tesrst == length maybealist
                            else final
   where [(s, tesrst)]    = p maybealist
         final            = [([s], tesrst)]
+
+nTimes :: Integer -> Parse a b -> Parse a [b]
+nTimes 0 _ input    = succeed [] input
+nTimes times p input    = if times > 0
+                          then ((p >*> nTimes (times - 1) p) `build` uncurry (:)) input
+                          else error "negative time input"
