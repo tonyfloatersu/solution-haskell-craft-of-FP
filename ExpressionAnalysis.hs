@@ -11,7 +11,7 @@ data Expr = Lit Int
           | Op Ops Expr Expr
 
 parser :: Parse Char Expr
-parser    = undefined
+parser    = litParse `alt` varParse
 
 varParse :: Parse Char Expr
 varParse    = spotVar `build` Var
@@ -26,3 +26,29 @@ spotVarFrag    = spot isVarFrag
 
 isVarFrag :: Char -> Bool
 isVarFrag frag    = frag <= 'z' && frag >= 'a'
+
+isOp :: Char -> Bool
+isOp ch    = ch `elem` "+-*/%"
+
+charToOp :: Char -> Ops
+charToOp ch | ch == '+'    = Add
+            | ch == '-'    = Sub
+            | ch == '*'    = Mul
+            | ch == '/'    = Div
+            | ch == '%'    = Mod
+            | otherwise    = error "wrong operation"
+
+litParse :: Parse Char Expr
+litParse    = (optional (token '~') >*> neList dig) `build` (charListToExp . uncurry (++))
+
+charListToExp :: String -> Expr
+charListToExp chl    = if head chl == '~'
+                       then Lit ((-1) * read (init chl) :: Int)
+                       else Lit (read chl :: Int)
+
+opExprParse :: Parse Char Expr
+opExprParse    = (token '(' >*> (parser >*> (spot isOp >*> (parser >*> token ')'))))
+                 `build` makeExpr
+
+makeExpr :: (t1, (Expr, (Char, (Expr, t)))) -> Expr
+makeExpr (_, (e1, (bop, (e2, _))))    = Op (charToOp bop) e1 e2
