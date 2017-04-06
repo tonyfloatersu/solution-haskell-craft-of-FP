@@ -113,17 +113,17 @@ dig :: Parse Char Char
 dig    = spot isDigit
 
 neList :: Parse a b -> Parse a [b]
-neList _ []    = [([], [])]
-neList p al    = if (null . p) al || length terst == length al
-                 then succeed [] al
-                 else ((p >*> neList p) `build` uncurry (:)) al
+neList _ []             = [([], [])]
+neList p al             = if (null . p) al || length terst == length al
+                          then succeed [] al
+                          else ((p >*> neList p) `build` uncurry (:)) al
   where [(_, terst)]    = p al
 
 optional :: Parse a b -> Parse a [b]
 optional p maybealist    = if (null . p) maybealist || length terst == length maybealist
                            then succeed [] maybealist
                            else [([s], terst)]
-  where [(s, terst)]    = p maybealist
+  where [(s, terst)]     = p maybealist
 
 nTimes :: Integer -> Parse a b -> Parse a [b]
 nTimes 0 _ input        = succeed [] input
