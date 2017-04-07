@@ -33,3 +33,28 @@ repeater test oper    = do checker <- test
                            then return ()
                            else do oper
                                    repeater test oper
+
+whileG :: (a -> IO Bool) -> (a -> IO a) -> (a -> IO a)
+whileG test oper val    = do goOrStop <- test val
+                             if goOrStop
+                             then return val
+                             else do operated <- oper val
+                                     whileG test oper operated
+
+improvedSumer :: (Integer, Integer) -> IO (Integer, Integer)
+improvedSumer (times, n)    = do putStrLn "give me a number: "
+                                 temp <- getLine
+                                 return (times - 1, n + read temp :: Integer)
+
+controller :: (Integer, Integer) -> IO Bool
+controller (val, _)    = return (val <= 0)
+
+getAverage :: IO ()
+getAverage    = do putStrLn "Give me a integer for average number: "
+                   tempAvgNum <- getLine
+                   let avgNum = read tempAvgNum :: Integer
+                   (_, sumVal) <- whileG controller improvedSumer (avgNum, 0)
+                   let sumValFloat = fromInteger sumVal :: Float
+                   let avgNumFloat = fromInteger avgNum :: Float
+                   let average = sumValFloat / avgNumFloat
+                   putStrLn ("the average you want is: " ++ show average)
