@@ -1,5 +1,7 @@
 module Chapter_18_my_note where
 
+import           System.IO.Unsafe (unsafePerformIO)
+
 readAndWrite :: IO ()
 readAndWrite    = do line <- getLine
                      putStrLn "Get one line"
@@ -58,3 +60,18 @@ getAverage    = do putStrLn "Give me a integer for average number: "
                    let avgNumFloat = fromInteger avgNum :: Float
                    let average = sumValFloat / avgNumFloat
                    putStrLn ("the average you want is: " ++ show average)
+
+accumulate :: [IO a] -> IO [a]
+accumulate    = return . map unsafePerformIO
+
+sequence :: [IO a] -> IO ()
+sequence iolist    = do _ <- accumulate iolist
+                        return ()
+
+seqFuns :: [a -> IO a] -> (a -> a)
+seqFuns funs iniv       = foldr subfunc iniv funs
+  where subfunc :: (a -> IO a) -> a -> a
+        subfunc func    = unsafePerformIO . func
+
+seqList :: [a -> IO a] -> a -> IO a
+seqList funcs val    = return (seqFuns funcs val)
