@@ -5,7 +5,7 @@ import           System.IO.Unsafe (unsafePerformIO)
 import           Data.Char
 
 data Expr = Lit { value    :: Int }
-          | Var { variable :: String }
+          | Var { variable :: Char }
           | Op { operate   :: Ops
                , express1  :: Expr
                , express2  :: Expr }
@@ -55,28 +55,23 @@ digit    = spot isDigit
 digList :: Parse Char String
 digList    = list digit
 
--- interpreter all the value in the list if they are interpreterable
--- so like neList digit "123" is [("123", "")]
--- for neList digit "213a432" is []
-neList :: Parse a b -> Parse a [b]
-neList p val | null val                      = []
-             | (null . snd . head) subres    = subres
-             | otherwise                     = []
-  where subres                               = _original p val
-
--- optional is more friendly than neList
--- optional digit "123" is [("123", "")]
--- optional digit "123a213" is [("123", "a213")]
+-- optional is something that get one parse at the top
+-- like optional (token '~') "~123123" is [("~", "123123")]
+-- then optional (token '~') "123123" is [("", "123123")]
 optional :: Parse a b -> Parse a [b]
-optional p val | null subres    = []
-               | otherwise      = _original p val
+optional p val | null subres    = [([], val)]
+               | otherwise      = (p `build` (: [])) val
   where subres                  = p val
 
-_original :: Parse a b -> Parse a [b]
-_original _ []                 = [([], [])]
-_original p val | null res     = succeed [] val
-                | otherwise    = ((p >*> _original p) `build` uncurry (:)) val
-  where res                    = p val
+-- neList digit "" is [("", "")]
+-- neList digit "123" is [("123", "")]
+-- neList digit "123a213" is [("123", "a213")]
+-- neList digit "a123" is [("", "a123")]
+neList :: Parse a b -> Parse a [b]
+neList _ []                 = [([], [])]
+neList p val | null res     = succeed [] val
+             | otherwise    = ((p >*> neList p) `build` uncurry (:)) val
+  where res                 = p val
 
 -- since the number restrict has been applied
 -- we consider only the problem about parser's recognization
@@ -86,3 +81,6 @@ nTimes :: Int -> Parse a b -> Parse a [b]
 nTimes 0 _ c                            = succeed [] c
 nTimes t p c | length c < t || t < 0    = []
              | otherwise                = ((p >*> nTimes (t - 1) p) `build` uncurry (:)) c
+
+parser :: Parse Char Expr
+parser    = undefined
