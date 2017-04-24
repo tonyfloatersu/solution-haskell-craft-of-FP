@@ -92,3 +92,26 @@ copyEOF    = do eof <- isEOF
 
 combination :: [a -> a] -> (a -> a)
 combination funcs valfeed    = foldr (\f x -> f x) valfeed funcs
+
+promptReadFile :: IO ()
+promptReadFile    = do loca <- getLine
+                       (putStrLn . unsafePerformIO . readFile) loca
+
+listIOprog :: String -> String
+listIOprog    = unlines . map reverse . lines
+
+sumIntsFile :: IO ()
+sumIntsFile    = do loca <- getLine
+                    let contents = (lines . unsafePerformIO . readFile) loca
+                    let values = map (\x -> read x :: Int) contents
+                    let result = sum values
+                    print result
+
+promptReadFileBind :: IO ()
+promptReadFileBind    = getLine >>= (putStrLn . unsafePerformIO . readFile)
+
+sumIntsFileBind :: IO ()
+sumIntsFileBind      = getLine >>= process
+    where process :: String -> IO ()
+          process    = print . sum . map (\x -> read x :: Int)
+                       . lines . unsafePerformIO . readFile
