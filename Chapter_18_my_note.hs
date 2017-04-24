@@ -1,5 +1,6 @@
 module Chapter_18_my_note where
 
+import           System.IO
 import           System.IO.Unsafe (unsafePerformIO)
 
 readAndWrite :: IO ()
@@ -75,3 +76,19 @@ seqFuns funs iniv       = foldr subfunc iniv funs
 
 seqList :: [a -> IO a] -> a -> IO a
 seqList funcs val    = return (seqFuns funcs val)
+
+copyInteract :: IO ()
+copyInteract    = do hSetBuffering stdin LineBuffering
+                     copyEOF
+                     hSetBuffering stdin NoBuffering
+
+copyEOF :: IO ()
+copyEOF    = do eof <- isEOF
+                if eof
+                then return ()
+                else do line <- getLine
+                        putStrLn line
+                        copyEOF
+
+combination :: [a -> a] -> (a -> a)
+combination funcs valfeed    = foldr (\f x -> f x) valfeed funcs
