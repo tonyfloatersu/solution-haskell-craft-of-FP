@@ -9,8 +9,10 @@ data Expr = Lit { value    :: Int }
           | Op { operate   :: Ops
                , express1  :: Expr
                , express2  :: Expr }
+          deriving Show
 
 data Ops = Add | Sub | Mul | Div | Mod
+         deriving Show
 
 type Parse a b = [a] -> [(b, [a])]
 
@@ -84,3 +86,14 @@ nTimes t p c | length c < t || t < 0    = []
 
 parser :: Parse Char Expr
 parser    = undefined
+
+varParse :: Parse Char Expr
+varParse    = spot isAlpha `build` Var
+
+litParse :: Parse Char Expr
+litParse    = (optional (token '~') >*> neList digit) `build` (charlistToLit . uncurry (++))
+
+charlistToLit :: String -> Expr
+charlistToLit []                      = error "wrong input of charlist"
+charlistToLit (x : xs) | x == '~'     = Lit ((-1) * (read xs :: Int))
+                       | otherwise    = Lit (read xs :: Int)
