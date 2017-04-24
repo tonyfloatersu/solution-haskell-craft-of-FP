@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -XFlexibleInstances #-}
+
 module Chapter_18_my_note where
 
 import           System.IO
