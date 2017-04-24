@@ -55,12 +55,18 @@ digit    = spot isDigit
 digList :: Parse Char String
 digList    = list digit
 
+-- interpreter all the value in the list if they are interpreterable
+-- so like neList digit "123" is [("123", "")]
+-- for neList digit "213a432" is []
 neList :: Parse a b -> Parse a [b]
 neList p val | null val                      = []
              | (null . snd . head) subres    = subres
              | otherwise                     = []
   where subres                               = _original p val
 
+-- optional is more friendly than neList
+-- optional digit "123" is [("123", "")]
+-- optional digit "123a213" is [("123", "a213")]
 optional :: Parse a b -> Parse a [b]
 optional p val | null subres    = []
                | otherwise      = _original p val
@@ -72,5 +78,11 @@ _original p val | null res     = succeed [] val
                 | otherwise    = ((p >*> _original p) `build` uncurry (:)) val
   where res                    = p val
 
-nTimes :: Integer -> Parse a b -> Parse a [b]
-nTimes t p c    = undefined
+-- since the number restrict has been applied
+-- we consider only the problem about parser's recognization
+-- since nTimes for nTimes 5 digit "a1234", then digit "p" is []
+-- thus it is []
+nTimes :: Int -> Parse a b -> Parse a [b]
+nTimes 0 _ c                            = succeed [] c
+nTimes t p c | length c < t || t < 0    = []
+             | otherwise                = ((p >*> nTimes (t - 1) p) `build` uncurry (:)) c
