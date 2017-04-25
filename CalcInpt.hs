@@ -85,10 +85,10 @@ nTimes t p c | length c < t || t < 0    = []
              | otherwise                = ((p >*> nTimes (t - 1) p) `build` uncurry (:)) c
 
 parser :: Parse Char Expr
-parser    = undefined
+parser    = varParse `alt` litParse `alt` opExprParser
 
 varParse :: Parse Char Expr
-varParse    = spot isAlpha `build` Var
+varParse    = spot (\x -> x `elem` ['a' .. 'z']) `build` Var
 
 litParse :: Parse Char Expr
 litParse    = (optional (token '~') >*> neList digit) `build` (charlistToLit . uncurry (++))
@@ -97,11 +97,28 @@ litParse    = (optional (token '~') >*> neList digit) `build` (charlistToLit . u
 -- first the form might be "~123123" or "123123"
 -- thus no null charlist
 -- then if charlist is one, then no "~"
+-- since all the variable are ['a' .. 'z']
+-- thus if anything is wrong, then use Var 'F' to show that it is error
 charlistToLit :: String -> Expr
-charlistToLit []                                = error "wrong input of charlist"
-charlistToLit (x : xs) | null xs && x == '~'    = error "wrong input of value"
+charlistToLit []                                = Var 'F'
+charlistToLit (x : xs) | null xs && x == '~'    = Var 'F'
                        | x == '~'               = Lit ((-1) * (read xs :: Int))
-                       | otherwise              = Lit (read xs :: Int)
+                       | otherwise              = Lit (read (x : xs) :: Int)
 
 isOperator :: Char -> Bool
-isOperator    = flip elem "-+*/%"
+isOperator    = flip elem "-+*/%:"
+
+opExprParser :: Parse Char Expr
+opExprParser = (token '(' >*> parser >*> spot isOperator >*> parser >*> token ')')
+               `build` makeExpr
+
+makeExpr :: (a1, (Expr, (Char, (Expr, a2)))) -> Expr
+makeExpr (_, (e1, (op, (e2, _))))    = Op (symbToOper op) e1 e2
+
+symbToOper :: Char -> Ops
+symbToOper ch | ch == '-'    = Sub
+              | ch == '+'    = Add
+              | ch == '*'    = Mul
+              | ch == '/'    = Div
+              | ch == '%'    = Mod
+              | otherwise    = error "wrong symbol"
