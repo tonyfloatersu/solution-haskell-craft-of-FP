@@ -148,26 +148,9 @@ commandParse :: Parse Char Command
 commandParse []                           = [(Null, [])]
 commandParse xs | subres == Var "Fail"    = [(Null, [])]
                 | subres == Var "exit"    = [(Exit, [])]
-                | assres == Var "Fail"    = [(Eval subres, [])]
-                | otherwise               = [(defExprCommandTrans assres, [])]
+                | otherwise               = [(defExprCommandTrans subres, [])]
   where subres                            = exprParser xs :: Expr
-        assres                            = cmdParser xs :: Expr
 
 defExprCommandTrans :: Expr -> Command
 defExprCommandTrans (Op Def (Var e1) e2)    = Assign e1 e2
-defExprCommandTrans (Lit val)               = Eval (Lit val)
-defExprCommandTrans (Var val)               = Eval (Var val)
-defExprCommandTrans _                       = Assign "Fail" (Lit (-0xffffff))
-
-cmdParser :: String -> Expr
-cmdParser    = topLevel _cmdParser (Var "Fail")
-
-_cmdParser :: Parse Char Expr
-_cmdParser    = varParse `alt` litParse `alt` _cmdAssignParser
-
-_cmdAssignParser :: Parse Char Expr
-_cmdAssignParser    = (token '(' >*> _cmdParser >*> token ':' >*> _cmdParser >*> token ')')
-                      `build` makeCmdAssign
-
-makeCmdAssign :: (a1, (Expr, (Char, (Expr, a2)))) -> Expr
-makeCmdAssign (_, (e1, (_, (e2, _))))    = Op Def e1 e2
+defExprCommandTrans other                   = Eval other
