@@ -5,13 +5,13 @@ import           System.IO.Unsafe (unsafePerformIO)
 import           Data.Char
 
 data Expr = Lit { value    :: Int }
-          | Var { variable :: Char }
+          | Var { variable :: String }
           | Op { operate   :: Ops
                , express1  :: Expr
                , express2  :: Expr }
           deriving Show
 
-data Ops = Add | Sub | Mul | Div | Mod
+data Ops = Add | Sub | Mul | Div | Mod | Def | Frc
          deriving Show
 
 type Parse a b = [a] -> [(b, [a])]
@@ -85,10 +85,13 @@ nTimes t p c | length c < t || t < 0    = []
              | otherwise                = ((p >*> nTimes (t - 1) p) `build` uncurry (:)) c
 
 parser :: Parse Char Expr
-parser    = varParse `alt` litParse `alt` opExprParser
+parser    = _parser . filter (not . flip elem " \n\t")
+
+_parser :: Parse Char Expr
+_parser    = varParse `alt` litParse `alt` opExprParser
 
 varParse :: Parse Char Expr
-varParse    = spot (\x -> x `elem` ['a' .. 'z']) `build` Var
+varParse    = neList (spot (\x -> x `elem` ['a' .. 'z'])) `build` Var
 
 litParse :: Parse Char Expr
 litParse    = (optional (token '~') >*> neList digit) `build` (charlistToLit . uncurry (++))
@@ -98,18 +101,18 @@ litParse    = (optional (token '~') >*> neList digit) `build` (charlistToLit . u
 -- thus no null charlist
 -- then if charlist is one, then no "~"
 -- since all the variable are ['a' .. 'z']
--- thus if anything is wrong, then use Var 'F' to show that it is error
+-- thus if anything is wrong, then use Var "Fail" to show that it is error
 charlistToLit :: String -> Expr
-charlistToLit []                                = Var 'F'
-charlistToLit (x : xs) | null xs && x == '~'    = Var 'F'
+charlistToLit []                                = Var "Fail"
+charlistToLit (x : xs) | null xs && x == '~'    = Var "Fail"
                        | x == '~'               = Lit ((-1) * (read xs :: Int))
                        | otherwise              = Lit (read (x : xs) :: Int)
 
 isOperator :: Char -> Bool
-isOperator    = flip elem "-+*/%:"
+isOperator    = flip elem "-+*/%:."
 
 opExprParser :: Parse Char Expr
-opExprParser = (token '(' >*> parser >*> spot isOperator >*> parser >*> token ')')
+opExprParser = (token '(' >*> _parser >*> spot isOperator >*> _parser >*> token ')')
                `build` makeExpr
 
 makeExpr :: (a1, (Expr, (Char, (Expr, a2)))) -> Expr
@@ -121,4 +124,6 @@ symbToOper ch | ch == '-'    = Sub
               | ch == '*'    = Mul
               | ch == '/'    = Div
               | ch == '%'    = Mod
+              | ch == ':'    = Def
+              | ch == '.'    = Frc
               | otherwise    = error "wrong symbol"
