@@ -93,7 +93,15 @@ varParse    = spot isAlpha `build` Var
 litParse :: Parse Char Expr
 litParse    = (optional (token '~') >*> neList digit) `build` (charlistToLit . uncurry (++))
 
+-- considered about how to change the charlist into a Int then to Lit
+-- first the form might be "~123123" or "123123"
+-- thus no null charlist
+-- then if charlist is one, then no "~"
 charlistToLit :: String -> Expr
-charlistToLit []                      = error "wrong input of charlist"
-charlistToLit (x : xs) | x == '~'     = Lit ((-1) * (read xs :: Int))
-                       | otherwise    = Lit (read xs :: Int)
+charlistToLit []                                = error "wrong input of charlist"
+charlistToLit (x : xs) | null xs && x == '~'    = error "wrong input of value"
+                       | x == '~'               = Lit ((-1) * (read xs :: Int))
+                       | otherwise              = Lit (read xs :: Int)
+
+isOperator :: Char -> Bool
+isOperator    = flip elem "-+*/%"
