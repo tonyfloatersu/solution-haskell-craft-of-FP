@@ -9,10 +9,10 @@ data Expr = Lit { value    :: Int }
           | Op { operate   :: Ops
                , express1  :: Expr
                , express2  :: Expr }
-          deriving Show
+          deriving (Eq, Show)
 
 data Ops = Add | Sub | Mul | Div | Mod | Def | Frc
-         deriving Show
+         deriving (Eq, Show)
 
 type Parse a b = [a] -> [(b, [a])]
 
@@ -112,8 +112,8 @@ isOperator :: Char -> Bool
 isOperator    = flip elem "-+*/%:."
 
 opExprParser :: Parse Char Expr
-opExprParser = (token '(' >*> _parser >*> spot isOperator >*> _parser >*> token ')')
-               `build` makeExpr
+opExprParser    = (token '(' >*> _parser >*> spot isOperator >*> _parser >*> token ')')
+                  `build` makeExpr
 
 makeExpr :: (a1, (Expr, (Char, (Expr, a2)))) -> Expr
 makeExpr (_, (e1, (op, (e2, _))))    = Op (symbToOper op) e1 e2
@@ -127,3 +127,47 @@ symbToOper ch | ch == '-'    = Sub
               | ch == ':'    = Def
               | ch == '.'    = Frc
               | otherwise    = error "wrong symbol"
+
+topLevel :: Parse a b -> b -> [a] -> b
+topLevel p defaultVal inp    = case results of
+                                 [] -> defaultVal
+                                 _  -> head results
+  where results              = [ f | (f, []) <- p inp]
+
+exprParser :: String -> Expr
+exprParser    = topLevel parser (Var "Fail")
+
+data Command = Eval { interpreted :: Expr }
+             | Assign { varName :: String
+                      , varValu :: Expr }
+             | Exit { }
+             | Null { }
+             deriving (Show, Eq)
+
+commandParse :: Parse Char Command
+commandParse []                           = [(Null, [])]
+commandParse xs | subres == Var "Fail"    = [(Null, [])]
+                | subres == Var "exit"    = [(Exit, [])]
+                | assres == Var "Fail"    = [(Eval subres, [])]
+                | otherwise               = [(defExprCommandTrans assres, [])]
+  where subres                            = exprParser xs :: Expr
+        assres                            = cmdParser xs :: Expr
+
+defExprCommandTrans :: Expr -> Command
+defExprCommandTrans (Op Def (Var e1) e2)    = Assign e1 e2
+defExprCommandTrans (Lit val)               = Eval (Lit val)
+defExprCommandTrans (Var val)               = Eval (Var val)
+defExprCommandTrans _                       = Assign "Fail" (Lit (-0xffffff))
+
+cmdParser :: String -> Expr
+cmdParser    = topLevel _cmdParser (Var "Fail")
+
+_cmdParser :: Parse Char Expr
+_cmdParser    = varParse `alt` litParse `alt` _cmdAssignParser
+
+_cmdAssignParser :: Parse Char Expr
+_cmdAssignParser    = (token '(' >*> _cmdParser >*> token ':' >*> _cmdParser >*> token ')')
+                      `build` makeCmdAssign
+
+makeCmdAssign :: (a1, (Expr, (Char, (Expr, a2)))) -> Expr
+makeCmdAssign (_, (e1, (_, (e2, _))))    = Op Def e1 e2
