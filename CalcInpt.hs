@@ -3,18 +3,7 @@ module CalcInpt where
 import           System.IO
 import           System.IO.Unsafe (unsafePerformIO)
 import           Data.Char
-
-data Expr = Lit { value    :: Int }
-          | Var { variable :: String }
-          | Op { operate   :: Ops
-               , express1  :: Expr
-               , express2  :: Expr }
-          deriving (Eq, Show)
-
-data Ops = Add | Sub | Mul | Div | Mod | Def | Frc
-         deriving (Eq, Show)
-
-type Parse a b = [a] -> [(b, [a])]
+import           CalcInptType ( Expr (..), Ops (..), Parse)
 
 none :: Parse a b
 none _    = []
@@ -132,7 +121,7 @@ topLevel :: Parse a b -> b -> [a] -> b
 topLevel p defaultVal inp    = case results of
                                  [] -> defaultVal
                                  _  -> head results
-  where results              = [ f | (f, []) <- p inp]
+  where results              = [ f | (f, []) <- p inp ]
 
 exprParser :: String -> Expr
 exprParser    = topLevel parser (Var "Fail")
@@ -154,3 +143,6 @@ commandParse xs | subres == Var "Fail"    = [(Null, [])]
 defExprCommandTrans :: Expr -> Command
 defExprCommandTrans (Op Def (Var e1) e2)    = Assign e1 e2
 defExprCommandTrans other                   = Eval other
+
+commandLine :: String -> Command
+commandLine    = topLevel commandParse Null
