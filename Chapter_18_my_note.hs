@@ -1,9 +1,10 @@
-{-# OPTIONS_GHC -XFlexibleInstances #-}
+{-# LANGUAGE FlexibleInstances #-}
 
 module Chapter_18_my_note where
 
 import           System.IO
 import           System.IO.Unsafe (unsafePerformIO)
+import qualified Control.Monad as M
 
 readAndWrite :: IO ()
 readAndWrite    = do line <- getLine
@@ -117,3 +118,6 @@ sumIntsFileBind      = getLine >>= process
     where process :: String -> IO ()
           process    = print . sum . map (\x -> read x :: Int)
                        . lines . unsafePerformIO . readFile
+
+addOneLineParse :: IO ()
+addOneLineParse    = getLine >>= \line -> (putStrLn . show) (1 + read line :: Int)

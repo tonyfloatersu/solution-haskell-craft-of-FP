@@ -1,9 +1,10 @@
 module CalcInpt where
 
-import           System.IO
-import           System.IO.Unsafe (unsafePerformIO)
+import           CalcInptStoreModule
+import           CalcInptType        (Expr (..), Ops (..), Parse)
 import           Data.Char
-import           CalcInptType ( Expr (..), Ops (..), Parse)
+import           System.IO
+import           System.IO.Unsafe    (unsafePerformIO)
 
 none :: Parse a b
 none _    = []
@@ -141,8 +142,17 @@ commandParse xs | subres == Var "Fail"    = [(Null, [])]
   where subres                            = exprParser xs :: Expr
 
 defExprCommandTrans :: Expr -> Command
-defExprCommandTrans (Op Def (Var e1) e2)    = Assign e1 e2
-defExprCommandTrans other                   = Eval other
+defExprCommandTrans (Op Def (Var e1) e2) = Assign e1 e2
+defExprCommandTrans other                = Eval other
 
 commandLine :: String -> Command
 commandLine    = topLevel commandParse Null
+
+-- the next task is to workout how to create a enduring data type
+-- how to make the Datatype store keep the previous value?
+
+-- how to filter the unused varName?
+-- how about using the Expr -> Maybe Float
+-- if returns nothing, then we can recursively put all the varName into the store.
+
+-- how to recursively remember the store before the exit of the calculator?
