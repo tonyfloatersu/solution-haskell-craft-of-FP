@@ -4,7 +4,11 @@ module Chapter_18_my_note where
 
 import           System.IO
 import           System.IO.Unsafe (unsafePerformIO)
-import qualified Control.Monad as M
+import           Chapter_17_my_note ( Parse (..)
+                                    , none
+                                    , succeed )
+import qualified Control.Monad.Identity as I
+import qualified Data.List as L
 
 readAndWrite :: IO ()
 readAndWrite    = do line <- getLine
@@ -29,9 +33,9 @@ sumInteract    = do putStrLn "Enter Integers one per line"
                     sum_val <- sumInts 0
                     putStrLn ("The final sum is " ++ show sum_val)
 
-fmap :: (a -> b) -> IO a -> IO b
-fmap f origio    = do val <- origio
-                      return (f val)
+_fmap :: (a -> b) -> IO a -> IO b
+_fmap f origio    = do val <- origio
+                       return (f val)
 
 repeater :: IO Bool -> IO () -> IO ()
 repeater test oper    = do checker <- test
@@ -121,3 +125,23 @@ sumIntsFileBind      = getLine >>= process
 
 addOneLineParse :: IO ()
 addOneLineParse    = getLine >>= \line -> (putStrLn . show) (1 + read line :: Int)
+
+(>@>) :: Monad m => (a -> m b) -> (b -> m c) -> (a -> m c)
+f >@> g    = \x -> f x >>= g
+
+newtype MP a b = MP { mp :: Parse a b }
+
+phoneBook :: [(String, String)]
+phoneBook    = [ ("betty", "number1")
+               , ("bonnie", "number2")
+               , ("pasty", "number3")
+               , ("lucille", "number4")
+               , ("wendy", "number5")
+               , ("penny", "number6")
+               , ("wendy", "number7") ]
+
+findKey :: (Eq k) => k -> [(k, v)] -> Maybe v
+findKey key    = foldr (\(ck, cv) t -> if ck == key then Just cv else t) Nothing
+
+findKey_ :: (Eq k) => k -> [(k, v)] -> Maybe v
+findKey_ key    = foldl (\t (ck, cv) -> if ck == key then Just cv else t) Nothing
